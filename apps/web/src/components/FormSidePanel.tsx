@@ -7,6 +7,7 @@ const INR = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR',
 export function FormSidePanel({ form }: { form: Partial<FormData> }) {
   const fields: Array<{ key: keyof FormData; label: string; format?: (v: unknown) => string }> = [
     { key: 'name', label: 'Name' },
+    { key: 'declared_age', label: 'Age', format: (v) => `${Number(v)} years` },
     { key: 'employment_type', label: 'Employment', format: (v) => String(v).replace('_', ' ') },
     { key: 'monthly_income', label: 'Monthly Income', format: (v) => INR.format(Number(v)) },
     { key: 'loan_amount_requested', label: 'Loan Requested', format: (v) => INR.format(Number(v)) },

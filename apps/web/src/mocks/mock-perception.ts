@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import type { PerceptionEvent } from '@loan-wizard/contracts';
 import { MOCK_PERCEPTION_EVENT_SEQUENCE } from '@loan-wizard/contracts';
 
-export function useMockPerception(onEvent: (e: PerceptionEvent) => void) {
+export function useMockPerception(onEvent: (e: PerceptionEvent) => void, intervalMs = 900) {
   useEffect(() => {
     let i = 0;
     const interval = setInterval(() => {
@@ -12,7 +12,7 @@ export function useMockPerception(onEvent: (e: PerceptionEvent) => void) {
       } else {
         clearInterval(interval);
       }
-    }, 2000);
+    }, intervalMs);
     return () => clearInterval(interval);
-  }, [onEvent]);
+  }, [intervalMs, onEvent]);
 }
