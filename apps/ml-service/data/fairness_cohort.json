@@ -1,0 +1,482 @@
+[
+  {
+    "employment_type": "salaried",
+    "monthly_income": 25000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 25000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 25000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 50000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 50000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "salaried_prime"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 50000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 80000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 80000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "salaried_prime"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 80000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "salaried_prime"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 150000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 150000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "salaried",
+    "monthly_income": 150000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 25000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 25000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 25000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 50000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 50000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 50000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 80000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 80000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 80000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 150000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 150000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "self_employed",
+    "monthly_income": 150000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 25000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 25000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 25000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 50000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 50000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 50000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 80000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 80000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 80000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 150000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 150000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "business_owner",
+    "monthly_income": 150000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 25000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 25000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 25000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 50000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 50000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 50000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 80000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 80000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 80000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 150000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 150000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "unemployed",
+    "monthly_income": 150000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 25000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 25000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 25000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 50000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 50000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 50000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 80000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "low",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 80000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 80000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 150000,
+    "age": 25,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 150000,
+    "age": 38,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "risky"
+  },
+  {
+    "employment_type": "retired",
+    "monthly_income": 150000,
+    "age": 55,
+    "eligible": true,
+    "risk_band": "medium",
+    "persona": "high_aspiration"
+  }
+]

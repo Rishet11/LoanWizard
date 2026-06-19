@@ -1,0 +1,38 @@
+{
+  "name": "@loan-wizard/perception",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "vite demo/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@loan-wizard/contracts": "workspace:*",
+    "@tensorflow-models/blazeface": "0.1.0",
+    "@tensorflow-models/face-landmarks-detection": "1.0.6",
+    "@tensorflow/tfjs": "4.19.0",
+    "react": "18.3.1",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/dom-speech-recognition": "0.0.4",
+    "@types/react": "18.3.1",
+    "@vitejs/plugin-react": "4.2.1",
+    "typescript": "5.4.5",
+    "vite": "5.2.11",
+    "vitest": "1.6.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  }
+}

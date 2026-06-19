@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Session {
+  id                 String    @id @default(cuid())
+  createdAt          DateTime  @default(now())
+  campaignSource     String
+  deviceUserAgent    String?
+  ipAddress          String?
+  geoLat             Float?
+  geoLng             Float?
+  status             String    @default("init")
+  tenantId           String    @default("alpha")
+  declaredName       String?
+  declaredEmployment String?
+  declaredIncome     Int?
+  loanAmountReq      Int?
+  loanPurpose        String?
+  endedAt            DateTime?
+  offerJson          String?
+  agentNotes            String?
+  deletedAt             DateTime?
+  deviceFingerprint     String?   // JSON blob from Stream A device_fingerprint event
+  documentCapturesJson  String?   // JSON array of document_captured payloads
+
+  transcripts    Transcript[]
+  cvSignals      CvSignal[]
+  consentRecords ConsentRecord[]
+  videoBlobs     VideoBlob[]
+}
+
+model Transcript {
+  id         String   @id @default(cuid())
+  sessionId  String
+  turnIdx    Int
+  speaker    String
+  text       String
+  confidence Float
+  timestamp  DateTime
+  questionId String?
+  session    Session  @relation(fields: [sessionId], references: [id])
+}
+
+model CvSignal {
+  id               String   @id @default(cuid())
+  sessionId        String
+  timestamp        DateTime
+  ageEstimate      Float?
+  ageConfidence    Float
+  livenessScore    Float
+  facePresent      Boolean
+  blinkCountWindow Int
+  headPoseDelta    Float
+  textureScore     Float?
+  session          Session  @relation(fields: [sessionId], references: [id])
+}
+
+model ConsentRecord {
+  id          String   @id @default(cuid())
+  sessionId   String
+  consentType String
+  verbalText  String
+  audioRef    String?
+  timestamp   DateTime
+  session     Session  @relation(fields: [sessionId], references: [id])
+}
+
+model VideoBlob {
+  id          String   @id @default(cuid())
+  sessionId   String
+  storageUri  String
+  durationSec Int
+  checksum    String
+  session     Session  @relation(fields: [sessionId], references: [id])
+}
+
+// Stream B (ML service) owns these tables — managed by SQLAlchemy, not Prisma
+model Decision {
+  id               Int       @id @default(autoincrement())
+  sessionId        String    @unique @map("session_id")
+  tenantId         String    @default("default") @map("tenant_id")
+  policyPassed     Boolean   @map("policy_passed")
+  failedRules      Json      @default("[]") @map("failed_rules")
+  riskBand         String?   @map("risk_band")
+  riskScore        Float?    @map("risk_score")
+  fraudScore       Float?    @map("fraud_score")
+  persona          String?
+  offerAmount      Int?      @map("offer_amount")
+  offerRate        Float?    @map("offer_rate")
+  offerTenure      Int?      @map("offer_tenure")
+  offerEmi         Int?      @map("offer_emi")
+  reasonCodes      Json      @default("[]") @map("reason_codes")
+  reasonNarrative  String?   @map("reason_narrative")
+  modelVersions    Json      @default("{}") @map("model_versions")
+  decidedAt        DateTime? @map("decided_at")
+
+  @@map("decisions")
+}
+
+model DecisionSnapshot {
+  id                    Int      @id @default(autoincrement())
+  decisionId            Int      @map("decision_id")
+  sessionId             String   @unique @map("session_id")
+  tenantId              String   @default("default") @map("tenant_id")
+  inputSnapshot         Json     @map("input_snapshot")
+  outputSnapshot        Json     @map("output_snapshot")
+  modelVersionsAtDecision Json   @default("{}") @map("model_versions_at_decision")
+  createdAt             DateTime? @map("created_at")
+
+  @@map("decision_snapshots")
+}

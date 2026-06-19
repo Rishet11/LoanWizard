@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Loan Wizard — v4 Platform Architecture</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Inter', 'Segoe UI', -apple-system, sans-serif; color: #0f172a; background: #fff; }
+  body { padding: 14px 18px; width: 297mm; min-height: 210mm; }
+
+  .header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 3px solid #0a2540; padding-bottom: 6px; margin-bottom: 10px;
+  }
+  .header h1 { font-size: 18px; color: #0a2540; letter-spacing: -0.01em; }
+  .header .sub { font-size: 10px; color: #64748b; }
+  .header .tag { font-size: 9px; background: #0a2540; color: #fff; padding: 3px 8px; border-radius: 999px; }
+
+  .stack { display: flex; flex-direction: column; gap: 5px; }
+
+  .tier {
+    display: grid; grid-template-columns: 110px 1fr; align-items: stretch;
+    border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0;
+  }
+  .tier .label {
+    background: #0a2540; color: #fff; display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase; padding: 8px;
+    text-align: center; line-height: 1.2;
+  }
+  .tier .body { padding: 7px 10px; display: flex; flex-wrap: wrap; gap: 5px; background: #f8fafc; }
+
+  .chip {
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 4px;
+    padding: 4px 8px; font-size: 9.5px; line-height: 1.25;
+    display: inline-flex; flex-direction: column; min-width: 0;
+  }
+  .chip b { color: #0a2540; font-size: 10px; font-weight: 600; }
+  .chip span { color: #475569; font-size: 8.5px; }
+
+  /* Tier accent colors */
+  .t-client .label  { background: #1e40af; }
+  .t-edge .label    { background: #0891b2; }
+  .t-svc .label     { background: #0a2540; }
+  .t-event .label   { background: #7c3aed; }
+  .t-data .label    { background: #059669; }
+  .t-ml .label      { background: #dc2626; }
+  .t-ext .label     { background: #ea580c; }
+  .t-plat .label    { background: #475569; }
+
+  .t-event .body, .t-ml .body { justify-content: space-around; }
+
+  /* Integrations columns */
+  .int-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
+  .int-col { display: flex; flex-direction: column; gap: 3px; }
+  .int-col h4 { font-size: 9px; color: #ea580c; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .int-col p { font-size: 8.5px; color: #334155; line-height: 1.35; }
+
+  /* Roadmap footer */
+  .roadmap {
+    margin-top: 8px; display: flex; align-items: center; gap: 6px;
+    background: linear-gradient(90deg, #eff6ff 0%, #ecfdf5 100%);
+    border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px;
+    font-size: 9px; color: #0a2540;
+  }
+  .roadmap .step { padding: 3px 8px; background: #fff; border: 1px solid #cbd5e1; border-radius: 999px; white-space: nowrap; }
+  .roadmap .step.current { background: #0a2540; color: #fff; border-color: #0a2540; }
+  .roadmap .arrow { color: #64748b; }
+
+  .caption { margin-top: 4px; font-size: 8px; color: #64748b; text-align: right; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Loan Wizard — AI Video Loan Origination Platform</h1>
+    <div class="sub">v4 target architecture · multi-tenant white-label, real disbursement, full compliance</div>
+  </div>
+  <span class="tag">v4 PLATFORM</span>
+</div>
+
+<div class="stack">
+
+  <div class="tier t-client">
+    <div class="label">Clients / Edge</div>
+    <div class="body">
+      <div class="chip"><b>Customer PWA</b><span>TF.js liveness · on-device OCR · Whisper-tiny STT · 10 Indian languages</span></div>
+      <div class="chip"><b>Agent Co-pilot</b><span>live review, objection handling</span></div>
+      <div class="chip"><b>Ops / Admin</b><span>risk ops · disputes · audit</span></div>
+      <div class="chip"><b>NBFC Tenant Portal</b><span>white-label config, co-lending</span></div>
+    </div>
+  </div>
+
+  <div class="tier t-edge">
+    <div class="label">Gateway</div>
+    <div class="body">
+      <div class="chip"><b>Cloudflare WAF</b><span>DDoS · bot · geofence · mTLS</span></div>
+      <div class="chip"><b>Kong / Envoy</b><span>per-tenant routing · rate-limit</span></div>
+      <div class="chip"><b>OIDC + Aadhaar eKYC</b><span>auth · signing</span></div>
+      <div class="chip"><b>GrowthBook</b><span>per-tenant feature flags</span></div>
+      <div class="chip"><b>OPA / PDP</b><span>policy-as-code authz</span></div>
+    </div>
+  </div>
+
+  <div class="tier t-svc">
+    <div class="label">Application Services<br>(k8s + Istio)</div>
+    <div class="body">
+      <div class="chip"><b>Session Svc</b><span>Next.js · consent · audit trail</span></div>
+      <div class="chip"><b>Perception Ingest</b><span>gRPC · transcript/CV validation</span></div>
+      <div class="chip"><b>Decision / Offer</b><span>policy + risk + persona</span></div>
+      <div class="chip"><b>Disbursement</b><span>LOS · e-sign · bank payout</span></div>
+      <div class="chip"><b>Collections / Servicing</b><span>EMI · NACH · reminders</span></div>
+      <div class="chip"><b>KYC / Docs</b><span>DigiLocker · PAN · Video-KYC</span></div>
+      <div class="chip"><b>Fraud Svc</b><span>graph + XGB + device fp</span></div>
+      <div class="chip"><b>Bureau Adapter</b><span>CIBIL/Exp/CRIF/Equifax merge</span></div>
+      <div class="chip"><b>Consent / DPDP</b><span>right-to-forget · evidence</span></div>
+      <div class="chip"><b>Notification</b><span>SMS · WA · push · IVR</span></div>
+      <div class="chip"><b>Dispute / Support</b><span>ticketing · chatbot</span></div>
+    </div>
+  </div>
+
+  <div class="tier t-event">
+    <div class="label">Event Spine</div>
+    <div class="body">
+      <div class="chip"><b>Kafka / Redpanda</b><span>schema registry · exactly-once</span></div>
+      <div class="chip"><b>session.*</b></div>
+      <div class="chip"><b>perception.cv / transcript</b></div>
+      <div class="chip"><b>decision.*</b></div>
+      <div class="chip"><b>kyc.* · fraud.*</b></div>
+      <div class="chip"><b>disbursement.* · repayment.*</b></div>
+      <div class="chip"><b>consent.* · audit.*</b></div>
+    </div>
+  </div>
+
+  <div class="tier t-data">
+    <div class="label">Data Plane</div>
+    <div class="body">
+      <div class="chip"><b>Postgres (Citus)</b><span>sessions · decisions · loans · per-tenant schema</span></div>
+      <div class="chip"><b>Object Store</b><span>S3/GCS · video blobs · KYC · WORM 7-yr</span></div>
+      <div class="chip"><b>Vector DB</b><span>Qdrant / pgvector · transcript + fraud graph</span></div>
+      <div class="chip"><b>Feature Store</b><span>Feast · online + offline parity</span></div>
+      <div class="chip"><b>Time-series</b><span>Clickhouse · CV streams · EMI series · SLOs</span></div>
+    </div>
+  </div>
+
+  <div class="tier t-ml">
+    <div class="label">ML / AI Platform</div>
+    <div class="body">
+      <div class="chip"><b>Triton / TF Serving</b><span>risk_mlp · fraud_xgb · collections_prop</span></div>
+      <div class="chip"><b>Gemma 2B / 7B (vLLM)</b><span>persona · reason-code narration · objection handling</span></div>
+      <div class="chip"><b>Vertex / Bedrock</b><span>heavy LLM ops · fraud narratives</span></div>
+      <div class="chip"><b>MLflow</b><span>registry · lineage · model cards</span></div>
+      <div class="chip"><b>Airflow · Kubeflow</b><span>daily retrain · shadow/canary · active learning</span></div>
+      <div class="chip"><b>Fairlearn</b><span>bias & fairness audits</span></div>
+    </div>
+  </div>
+
+  <div class="tier t-ext">
+    <div class="label">Integrations</div>
+    <div class="body">
+      <div class="int-grid">
+        <div class="int-col">
+          <h4>Identity / KYC</h4>
+          <p>Aadhaar OKYC · DigiLocker · NSDL PAN · CKYC · Video-KYC · Face-match</p>
+        </div>
+        <div class="int-col">
+          <h4>Bureau / Alt-data</h4>
+          <p>CIBIL · Experian · CRIF · Equifax · GSTN · BBPS · telco</p>
+        </div>
+        <div class="int-col">
+          <h4>Disburse / Servicing</h4>
+          <p>NPCI/UPI · NACH e-mandate · bank rails · BBPS · Razorpay · recovery</p>
+        </div>
+        <div class="int-col">
+          <h4>Compliance / Channels</h4>
+          <p>RBI Video-KYC archive · FIU-IND · DPDP · WhatsApp · Exotel IVR · co-lending (FLDG)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier t-plat">
+    <div class="label">Platform</div>
+    <div class="body">
+      <div class="chip"><b>OpenTelemetry</b><span>Grafana · Tempo · Loki · Prom SLOs</span></div>
+      <div class="chip"><b>Vault + KMS (BYOK)</b><span>per-tenant keys · secrets</span></div>
+      <div class="chip"><b>SOC2 · ISO 27001 · DPDP</b><span>immutable audit · OPA policies</span></div>
+      <div class="chip"><b>Multi-region</b><span>Mumbai + Hyd + SG DR · active-active</span></div>
+      <div class="chip"><b>ArgoCD GitOps</b><span>Crossplane · Flagger canary</span></div>
+      <div class="chip"><b>FinOps</b><span>Kubecost per-tenant attribution</span></div>
+      <div class="chip"><b>Backstage</b><span>developer portal · golden paths</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="roadmap">
+  <span class="step current">MVP (today)</span>
+  <span class="arrow">▸</span>
+  <span class="step">v1: real bureau + S3 + auth</span>
+  <span class="arrow">▸</span>
+  <span class="step">v2: Kafka + TF Serving + vector DB</span>
+  <span class="arrow">▸</span>
+  <span class="step">v3: Gemma + fraud ML + active learning</span>
+  <span class="arrow">▸</span>
+  <span class="step">v4: multi-tenant · disbursement · co-lending</span>
+</div>
+
+<div class="caption">Contracts boundary (`@loan-wizard/contracts`) preserved from MVP through v4 — every new service consumes the same session/perception/decision shapes.</div>
+
+</body>
+</html>

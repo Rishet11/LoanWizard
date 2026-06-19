@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Perception Demo</title>
+  <style>
+    body { font-family: monospace; background: #0a0a0a; color: #e0e0e0; margin: 0; padding: 1rem; }
+    h1 { color: #4fc3f7; }
+    #video { border: 1px solid #333; border-radius: 8px; width: 320px; height: 240px; background: #111; }
+    #controls { margin: 1rem 0; }
+    button { padding: 0.5rem 1.5rem; margin-right: 0.5rem; cursor: pointer; border: none; border-radius: 4px; font-size: 1rem; }
+    #startBtn { background: #4fc3f7; color: #000; }
+    #stopBtn { background: #ef5350; color: #fff; }
+    #status { color: #81c784; margin: 0.5rem 0; }
+    #log { background: #111; border: 1px solid #333; border-radius: 4px; padding: 0.5rem; height: 400px; overflow-y: auto; font-size: 0.75rem; }
+    .event-type { color: #4fc3f7; }
+    .error { color: #ef5350; }
+  </style>
+</head>
+<body>
+  <h1>Perception Demo</h1>
+  <video id="video" autoplay muted playsinline></video>
+  <div id="controls">
+    <button id="startBtn">Start Session</button>
+    <button id="stopBtn">Stop</button>
+  </div>
+  <div id="status">Status: idle</div>
+  <div id="log"></div>
+  <script type="module" src="./main.tsx"></script>
+</body>
+</html>

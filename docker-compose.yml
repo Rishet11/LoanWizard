@@ -1,0 +1,44 @@
+version: '3.8'
+
+# Full-stack local dev: Postgres + ML service
+# Web app runs outside Docker via: pnpm --filter @loan-wizard/web dev
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: loan
+      POSTGRES_PASSWORD: loan
+      POSTGRES_DB: loan
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loan"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ml-service:
+    build:
+      context: ./apps/ml-service
+      args:
+        TRAIN_MODEL: "false"
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://loan:loan@db:5432/loan
+      - PERSONA_STRATEGY=rules_first
+      - USE_MOCK_BUREAU=true
+      - ENABLE_GEMINI_FALLBACK=false
+      - CORS_ALLOWED_ORIGINS=http://localhost:3000
+    volumes:
+      - ./apps/ml-service/app/models/risk_mlp:/app/app/models/risk_mlp
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  pgdata:

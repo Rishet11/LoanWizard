@@ -1,0 +1,112 @@
+"""TF Keras MLP risk model wrapper with inline loading."""
+from __future__ import annotations
+
+import logging
+import os
+from pathlib import Path
+
+import numpy as np
+
+from app.schemas import FormData, CVSignalsSummary, RiskScoreOutput
+from app.models.risk_mlp.features import build_feature_vector, get_feature_importance, FEATURE_NAMES
+
+logger = logging.getLogger(__name__)
+
+VERSION = "1.2.0"
+
+MODEL_PATH = Path(__file__).parent.parent / "models" / "risk_mlp" / "keras_model.h5"
+
+# Scaler params stored alongside the model (populated at train time)
+SCALER_PATH = Path(__file__).parent.parent / "models" / "risk_mlp" / "scaler_params.npz"
+
+
+class RiskScorer:
+    def __init__(self) -> None:
+        self._model = None
+        self._scaler_mean: np.ndarray | None = None
+        self._scaler_scale: np.ndarray | None = None
+        self._loaded = False
+
+    def load(self) -> None:
+        try:
+            import tensorflow as tf  # type: ignore
+
+            keras_path = MODEL_PATH.parent / "keras_model.keras"
+            load_path = keras_path if keras_path.exists() else MODEL_PATH if MODEL_PATH.exists() else None
+            if load_path:
+                self._model = tf.keras.models.load_model(str(load_path), compile=False)
+                logger.info("Risk model loaded from %s", load_path)
+            else:
+                logger.warning("No keras_model.h5 found at %s — using fallback heuristic", MODEL_PATH)
+
+            if SCALER_PATH.exists():
+                data = np.load(str(SCALER_PATH))
+                self._scaler_mean = data["mean"]
+                self._scaler_scale = data["scale"]
+        except Exception as exc:
+            logger.warning("Risk model failed to load (%s) — using fallback heuristic", exc)
+        finally:
+            self._loaded = True
+
+    @property
+    def is_loaded(self) -> bool:
+        return self._model is not None
+
+    def _normalize(self, vec: np.ndarray) -> np.ndarray:
+        if self._scaler_mean is not None and self._scaler_scale is not None:
+            return (vec - self._scaler_mean) / (self._scaler_scale + 1e-9)
+        return vec
+
+    def _heuristic_score(self, form: FormData, cv: CVSignalsSummary, bureau: dict) -> float:
+        """Deterministic fallback when model not available."""
+        income = form.monthly_income or 1.0
+        loan = form.loan_amount_requested or 0.0
+        cibil = bureau.get("cibil_score_proxy", 700)
+        default_h = 1.0 if bureau.get("default_history", False) else 0.0
+        emp = form.employment_type or "unemployed"
+
+        ltv_risk = min(loan / (income * 24 + 1e-9), 1.0)
+        cibil_risk = max(0.0, (750 - cibil) / 450)
+        emp_risk = {"salaried": 0.1, "self_employed": 0.3, "business_owner": 0.35, "retired": 0.25, "unemployed": 0.8}.get(emp, 0.5)
+        liveness_risk = max(0.0, 1.0 - cv.avg_liveness)
+
+        score = 0.35 * ltv_risk + 0.3 * cibil_risk + 0.2 * emp_risk + 0.1 * liveness_risk + 0.05 * default_h
+        return float(min(max(score, 0.0), 1.0))
+
+    def score(
+        self,
+        form: FormData,
+        cv: CVSignalsSummary,
+        bureau: dict,
+        geo_tier: int = 2,
+    ) -> RiskScoreOutput:
+        raw_vec = build_feature_vector(form, cv, bureau, geo_tier)
+        importance = get_feature_importance(raw_vec)
+
+        if self._model is not None:
+            try:
+                normalized = self._normalize(raw_vec)
+                pred = self._model.predict(normalized.reshape(1, -1), verbose=0)
+                risk_score = float(pred[0][0])
+            except Exception as exc:
+                logger.warning("Model inference failed (%s) — using heuristic", exc)
+                risk_score = self._heuristic_score(form, cv, bureau)
+        else:
+            risk_score = self._heuristic_score(form, cv, bureau)
+
+        risk_score = min(max(risk_score, 0.0), 1.0)
+
+        if risk_score < 0.2:
+            band = "low"
+        elif risk_score < 0.5:
+            band = "medium"
+        else:
+            band = "high"
+
+        top_features = dict(sorted(importance.items(), key=lambda x: x[1], reverse=True)[:5])
+
+        return RiskScoreOutput(
+            risk_band=band,
+            risk_score=round(risk_score, 4),
+            feature_importance=top_features,
+        )
