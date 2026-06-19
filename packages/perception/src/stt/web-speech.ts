@@ -4,8 +4,49 @@ export interface STTResult {
   isFinal: boolean;
 }
 
+interface BrowserSpeechAlternative {
+  transcript: string;
+  confidence?: number;
+}
+
+interface BrowserSpeechResult {
+  readonly isFinal: boolean;
+  readonly [index: number]: BrowserSpeechAlternative;
+}
+
+interface BrowserSpeechResultList {
+  readonly [index: number]: BrowserSpeechResult;
+}
+
+interface BrowserSpeechRecognitionEvent {
+  readonly resultIndex: number;
+  readonly results: BrowserSpeechResultList;
+}
+
+interface BrowserSpeechRecognitionErrorEvent {
+  readonly error: string;
+}
+
+interface BrowserSpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  maxAlternatives: number;
+  onresult: ((event: BrowserSpeechRecognitionEvent) => void) | null;
+  onerror: ((event: BrowserSpeechRecognitionErrorEvent) => void) | null;
+  start(): void;
+  stop(): void;
+}
+
+type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
+
+type WindowWithSpeechRecognition = Window & {
+  SpeechRecognition?: BrowserSpeechRecognitionConstructor;
+  webkitSpeechRecognition?: BrowserSpeechRecognitionConstructor;
+};
+
 export class WebSpeechSTT {
-  private recognition: SpeechRecognition | null = null;
+  private recognition: BrowserSpeechRecognition | null = null;
   private onResult: (r: STTResult) => void;
   private lang: string;
 
@@ -15,18 +56,19 @@ export class WebSpeechSTT {
   }
 
   start(): void {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) throw new Error('Web Speech API not available');
+    const SpeechRecognitionCtor =
+      (window as WindowWithSpeechRecognition).SpeechRecognition ??
+      (window as WindowWithSpeechRecognition).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) throw new Error('Web Speech API not available');
 
-    const rec = new SpeechRecognition() as SpeechRecognition;
+    const rec = new SpeechRecognitionCtor();
     this.recognition = rec;
     rec.continuous = true;
     rec.interimResults = true;
     rec.lang = this.lang;
     rec.maxAlternatives = 1;
 
-    rec.onresult = (event: SpeechRecognitionEvent) => {
+    rec.onresult = (event: BrowserSpeechRecognitionEvent) => {
       const r = event.results[event.resultIndex];
       const alt = r[0];
       this.onResult({
@@ -36,7 +78,7 @@ export class WebSpeechSTT {
       });
     };
 
-    rec.onerror = (e: SpeechRecognitionErrorEvent) => {
+    rec.onerror = (e: BrowserSpeechRecognitionErrorEvent) => {
       if (e.error !== 'no-speech' && e.error !== 'aborted') {
         console.warn('[STT] Web Speech error:', e.error);
       }
