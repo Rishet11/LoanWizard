@@ -3,6 +3,8 @@ import { Card, CardBody } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 async function getKPIs() {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const [todayCount, total, offered, accepted] = await Promise.all([

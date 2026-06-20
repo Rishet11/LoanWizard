@@ -8,14 +8,26 @@ interface FairnessData { by_employment: GroupStat[]; by_age_bucket: GroupStat[];
 
 export default function FairnessPage() {
   const [data, setData] = useState<FairnessData | null>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/admin/fairness').then((r) => r.json()).then(setData);
+    fetch('/api/admin/fairness')
+      .then((r) => {
+        if (!r.ok) throw new Error('Fairness data unavailable');
+        return r.json();
+      })
+      .then(setData)
+      .catch(() => setError('Fairness data is not available right now.'));
   }, []);
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-(--color-fg) mb-2">Fairness Report</h1>
+      {error && (
+        <div className="bg-amber-50 border border-amber-200 rounded-[var(--radius-md)] px-4 py-3 mb-6 text-sm text-amber-800">
+          {error}
+        </div>
+      )}
       {data?.flagged && (
         <div className="bg-red-50 border border-red-200 rounded-[var(--radius-md)] px-4 py-3 mb-6 text-sm text-red-800">
           ⚠ One or more groups have disparate impact ratio &lt; 0.8. Review required.

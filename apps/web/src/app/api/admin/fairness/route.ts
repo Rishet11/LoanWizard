@@ -10,8 +10,35 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(mockFairness());
   }
 
-  const res = await fetch(`${config.mlServiceUrl}/admin/fairness`);
-  return NextResponse.json(await res.json());
+  const res = await fetch(`${config.mlServiceUrl}/fairness/report`, { cache: 'no-store' });
+  if (!res.ok) {
+    return NextResponse.json({ error: 'ML fairness report unavailable' }, { status: 502 });
+  }
+  return NextResponse.json(adaptFairnessReport(await res.json()));
+}
+
+function toGroupStats(groups: Record<string, number>) {
+  const maxRate = Math.max(...Object.values(groups), 0.0001);
+  return Object.entries(groups).map(([group, approval_rate]) => ({
+    group,
+    approval_rate,
+    disparate_impact_ratio: approval_rate / maxRate,
+  }));
+}
+
+function adaptFairnessReport(report: {
+  by_employment: Record<string, number>;
+  by_age_bucket: Record<string, number>;
+  disparate_impact_ratio: number;
+}) {
+  const by_employment = toGroupStats(report.by_employment);
+  const by_age_bucket = toGroupStats(report.by_age_bucket);
+  return {
+    by_employment,
+    by_age_bucket,
+    flagged: report.disparate_impact_ratio < 0.8 ||
+      [...by_employment, ...by_age_bucket].some((g) => g.disparate_impact_ratio < 0.8),
+  };
 }
 
 function mockFairness() {
