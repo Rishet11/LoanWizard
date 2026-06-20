@@ -1,3 +1,9 @@
+---
+title: LoanWizard Web
+sdk: docker
+app_port: 3000
+---
+
 # LoanWizard
 
 > Apply for a loan by talking to your camera. The model watches, listens, verifies, and prices the offer in under two minutes. No branch, no paperwork, no waiting room.
@@ -34,6 +40,12 @@ A single continuous experience where the interview *is* the application:
 ---
 
 ## Live demo flow
+
+The hosted judge link is intentionally configured as a reliable public demo:
+scripted browser perception and instant mock offer on the web Space, plus a
+separate live ML Space exposing the real Keras `/offer`, `/health`, `/docs`,
+`/fairness/report`, and `/drift/*` endpoints. The real camera path is available
+locally with `NEXT_PUBLIC_USE_MOCK_PERCEPTION=false`.
 
 1. **Landing (Operator Console).** A single-screen lending terminal showing live perception gauges, the video feed, and the decision engine, with one Initiate control.
 2. **Permission gate.** Plain-language reasons before camera, mic and location are requested.
@@ -154,9 +166,48 @@ pnpm --filter @loan-wizard/perception dev   # http://localhost:5173
 | `DATABASE_URL` | none | PostgreSQL connection string |
 | `ML_SERVICE_URL` | `http://localhost:8000` | ML service base URL |
 | `NEXT_PUBLIC_ML_MODE` | `mock` | set to `real` to call the live ML service |
-| `USE_MOCK_PERCEPTION` | `true` | set to `false` to use the real camera and mic |
+| `NEXT_PUBLIC_USE_MOCK_PERCEPTION` | `true` | set to `false` to use the real camera and mic |
+| `ADMIN_PASSWORD` | none in production | required strong admin password for hosted demos |
 
 ML service: `PERSONA_STRATEGY`, `USE_MOCK_BUREAU`, `ENABLE_GEMINI_FALLBACK`, `CORS_ALLOWED_ORIGINS`.
+
+## Hugging Face deployment
+
+Recommended hosted architecture:
+
+- **HF Web Space:** deploy this repository root as a Docker Space. The root
+  `Dockerfile` builds `apps/web`, runs `prisma generate`, and serves Next.js on
+  port 3000.
+- **HF ML Space:** deploy `apps/ml-service/` as a separate Docker Space. Its
+  README declares `sdk: docker` and `app_port: 8000`.
+- **Database:** use Neon Postgres. HF Spaces storage is not a managed database
+  and should not hold the audit trail.
+
+Required web Space secrets/variables:
+
+```bash
+DATABASE_URL=postgresql://...sslmode=require
+ML_SERVICE_URL=https://<ml-space-host>
+NEXT_PUBLIC_ML_MODE=mock
+NEXT_PUBLIC_USE_MOCK_PERCEPTION=true
+ADMIN_PASSWORD=<strong-secret>
+```
+
+Required ML Space secrets/variables:
+
+```bash
+DATABASE_URL=postgresql://...sslmode=require
+USE_MOCK_BUREAU=true
+PERSONA_STRATEGY=rules_first
+ENABLE_GEMINI_FALLBACK=false
+```
+
+Before public submission, run Prisma against Neon and seed admin data:
+
+```bash
+DATABASE_URL=postgresql://...sslmode=require pnpm --filter @loan-wizard/web db:push
+DATABASE_URL=postgresql://...sslmode=require pnpm --filter @loan-wizard/web seed
+```
 
 ---
 
