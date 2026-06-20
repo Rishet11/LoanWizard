@@ -47,7 +47,7 @@ export default function AdminLogin() {
           {error && <p className="text-sm text-(--color-danger)">{error}</p>}
           <Button type="submit" loading={loading} className="w-full">Sign in</Button>
         </form>
-        <p className="text-xs text-(--color-muted) mt-4 text-center">Default: <code>admin123</code> (set ADMIN_PASSWORD env)</p>
+        <p className="text-xs text-(--color-muted) mt-4 text-center">Use the password configured for this demo.</p>
       </div>
     </div>
   );

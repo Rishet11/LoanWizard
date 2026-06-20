@@ -2,13 +2,11 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { LayoutDashboard, Users, TrendingUp, Scale, LogOut } from 'lucide-react';
-
-const ADMIN_COOKIE = 'admin_session';
-const PASSWORD = process.env.ADMIN_PASSWORD ?? 'admin123';
+import { ADMIN_COOKIE, isAdminSessionToken } from '../../lib/admin-auth';
 
 function isAuthed() {
   const store = cookies();
-  return store.get(ADMIN_COOKIE)?.value === PASSWORD;
+  return isAdminSessionToken(store.get(ADMIN_COOKIE)?.value);
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

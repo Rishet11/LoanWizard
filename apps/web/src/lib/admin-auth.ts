@@ -1,11 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { createHmac, timingSafeEqual } from 'crypto';
 
 const COOKIE = 'admin_session';
-const PASSWORD = process.env.ADMIN_PASSWORD ?? 'admin123';
+const COOKIE_PAYLOAD = 'loanwizard-admin-session-v1';
+
+function getAdminPassword(): string {
+  const password = process.env.ADMIN_PASSWORD;
+  if (password) return password;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('ADMIN_PASSWORD is required in production');
+  }
+  return 'admin123';
+}
+
+function safeEqual(a: string, b: string): boolean {
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  return left.length === right.length && timingSafeEqual(left, right);
+}
+
+export function createAdminSessionToken(): string {
+  return createHmac('sha256', getAdminPassword()).update(COOKIE_PAYLOAD).digest('hex');
+}
+
+export function isAdminSessionToken(value: string | undefined): boolean {
+  if (!value) return false;
+  return safeEqual(value, createAdminSessionToken());
+}
 
 export function isAdminAuthed(req: NextRequest): boolean {
-  return req.cookies.get(COOKIE)?.value === PASSWORD;
+  return isAdminSessionToken(req.cookies.get(COOKIE)?.value);
 }
 
 export async function requireAdmin(req: NextRequest): Promise<NextResponse | null> {
@@ -16,7 +40,7 @@ export async function requireAdmin(req: NextRequest): Promise<NextResponse | nul
 }
 
 export async function adminLogin(password: string): Promise<boolean> {
-  return password === PASSWORD;
+  return safeEqual(password, getAdminPassword());
 }
 
 export { COOKIE as ADMIN_COOKIE };
