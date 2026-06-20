@@ -247,6 +247,13 @@ function VideoModule() {
         <span className="flex items-center gap-1.5"><Radio size={11} className="text-(--color-accent)" /> 1080p · 30fps</span>
       </div>
 
+      {/* honesty marker — this landing feed is an illustrative preview; the live session runs the real pipeline */}
+      <div className="absolute top-9 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+        <span className="px-2.5 py-1 rounded-full text-[9px] uppercase tracking-[0.25em] bg-black/45 text-(--color-bg)/75 border border-(--color-bg)/15 backdrop-blur-sm">
+          simulated preview
+        </span>
+      </div>
+
       {/* face */}
       <div className="absolute inset-0 grid place-items-center">
         <div className="relative">
