@@ -9,8 +9,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate",
-    "seed": "tsx scripts/seed-demo.ts"
+    "db:push": "prisma db push",
+    "seed": "tsx scripts/seed-demo.mts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@loan-wizard/contracts": "workspace:*",

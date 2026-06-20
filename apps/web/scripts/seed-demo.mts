@@ -5,7 +5,34 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
-import { MOCK_OFFER, MOCK_TRANSCRIPT } from '@loan-wizard/contracts';
+// Inlined demo fixtures — kept local so the seed has zero cross-package ESM resolution dependency.
+const MOCK_OFFER = {
+  session_id: 'mock-session-001',
+  eligible: true,
+  amount: 500000,
+  interest_rate: 13.5,
+  tenure_months: 36,
+  emi: 16961,
+  risk_band: 'low',
+  persona: 'salaried_prime',
+  reason_codes: [
+    { code: 'STABLE_INCOME', label: 'Stable monthly income', weight: 0.35 },
+    { code: 'GOOD_CREDIT', label: 'Strong credit profile', weight: 0.28 },
+    { code: 'LOW_LTV', label: 'Healthy loan-to-income ratio', weight: 0.22 },
+  ],
+  rejection_reason: null as string | null,
+  generated_at: new Date().toISOString(),
+  fraud_score: 0.05,
+  reason_narrative: 'Stable income with a clean credit profile makes this a low-risk applicant.',
+  model_versions: { risk: '1.2.0', fraud: '0.1.0', persona_rules: '1.0.0' },
+};
+
+const MOCK_TRANSCRIPT = [
+  { turn_idx: 0, speaker: 'agent', text: 'Hi, may I know your full name please?', confidence: 1, question_id: 'name' },
+  { turn_idx: 1, speaker: 'customer', text: 'Rahul Sharma', confidence: 0.92, question_id: 'name' },
+  { turn_idx: 2, speaker: 'agent', text: 'What is your current employment?', confidence: 1, question_id: 'employment' },
+  { turn_idx: 3, speaker: 'customer', text: 'I work as a software engineer, salaried job', confidence: 0.89, question_id: 'employment' },
+];
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
