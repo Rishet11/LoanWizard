@@ -6,11 +6,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml .
-# Install with all optional deps for demo
-RUN pip install --no-cache-dir ".[gemini]"
-
 COPY app/ ./app/
 COPY scripts/ ./scripts/
+COPY data/ ./data/
+
+# Install with all optional deps for demo. The package source is copied before
+# install because hatchling expects the app package to exist.
+RUN pip install --no-cache-dir ".[gemini]"
 
 # Train model at build time if data exists (CI/CD path)
 # For local dev: docker-compose will mount or train separately
