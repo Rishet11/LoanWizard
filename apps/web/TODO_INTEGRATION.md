@@ -4,11 +4,11 @@
 
 | Variable | Current | Flip to |
 |---|---|---|
-| `USE_MOCK_PERCEPTION` | `true` | `false` |
+| `NEXT_PUBLIC_USE_MOCK_PERCEPTION` | `true` | `false` |
 | `NEXT_PUBLIC_ML_MODE` | `mock` | `real` |
 | `ML_SERVICE_URL` | `http://localhost:8000` | Stream B deployed URL |
-| `DATABASE_URL` | local dev | Neon/Railway production string |
-| `ADMIN_PASSWORD` | `admin123` | Strong secret in prod |
+| `DATABASE_URL` | local dev | Neon production string |
+| `ADMIN_PASSWORD` | unset in prod | Strong secret in prod |
 
 ## 2. New Routes (v4 additions)
 
@@ -60,7 +60,7 @@ When Stream A adds new strings for doc-capture or challenge overlays, add keys u
 
 ## 6. Admin Credentials
 
-Default: `ADMIN_PASSWORD=admin123`. Set `ADMIN_PASSWORD` env var in Vercel before demo. Cookie is `admin_session`, `httpOnly`, 7-day expiry.
+Production requires `ADMIN_PASSWORD`. Development falls back to `admin123` only for local convenience. Cookie is `admin_session`, `httpOnly`, 7-day expiry, and stores an HMAC token rather than the raw password.
 
 ## 7. Perception Event Fields NOT Currently Used
 
@@ -87,26 +87,24 @@ Default: `ADMIN_PASSWORD=admin123`. Set `ADMIN_PASSWORD` env var in Vercel befor
 
 ## 10. CORS
 
-Stream B must allow:
-- `https://loan-wizard-*.vercel.app` (preview)
-- `https://loan-wizard.vercel.app` (production)
+Stream B currently allows all origins for demo simplicity. For production, restrict CORS to the final Hugging Face web Space origin.
 
 ## 11. Deployed URL
 
-TODO: Add after Vercel deployment.
+TODO: Add after Hugging Face deployment.
 
 ## 12. Demo Flow (v4)
 
-1. Open `https://loan-wizard.vercel.app`
+1. Open the Hugging Face web Space URL
 2. Language switcher → हिन्दी, then back to EN
 3. "Start my session →"
-4. Permission gate: Allow Camera & Mic → Allow Location
+4. Hosted mode skips camera permission and starts the scripted session
 5. Call UI: show progress bar, CV indicators, form animating in
 6. "End call" → Processing page → Offer screen v2
 7. Show trust meter, "Why this offer?" expansion
 8. "View KFS" modal
 9. "Accept" → e-sign modal, enter 6 digits → Accepted
-10. Navigate to `/admin` (password: `admin123`)
+10. Navigate to `/admin` with the configured `ADMIN_PASSWORD`
 11. Sessions list → click the session → Decision tab → "Run replay" with different income
 12. Drift chart → select `monthly_income` feature
 13. Fairness report → point out red bars

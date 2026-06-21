@@ -90,7 +90,7 @@ The ML service is stateless per request and horizontally scalable behind a load 
 See the README. `docker compose up -d` for Postgres and the ML service, `prisma db push` for the web tables, then `pnpm --filter @loan-wizard/web dev`. There is also a native path if Docker is unavailable.
 
 **What if the camera is blocked or unavailable?**
-Set `USE_MOCK_PERCEPTION=true` to drive the flow from canned perception events, which is how we demo without a webcam.
+Set `NEXT_PUBLIC_USE_MOCK_PERCEPTION=true` to drive the flow from canned perception events, which is how the hosted public demo runs without a webcam.
 
 **What broke during the build and how did you handle it?**
 The most instructive one: a full disk caused Docker to corrupt its metadata and Python installs to fail. We diagnosed it to the root cause (disk space), freed it, and pivoted the ML service to run natively. We also fixed a class of invisible buttons caused by referencing a Tailwind color token that did not exist in the v4 setup.

@@ -1,9 +1,9 @@
 # Loan Wizard — 2-Minute Demo Script
 
 ## Setup (before presenting)
-1. Open `https://loan-wizard.vercel.app` in a clean browser tab
-2. Have camera + mic ready
-3. DB shows 0 sessions (reset if needed)
+1. Open the Hugging Face web Space in a clean browser tab
+2. Confirm `NEXT_PUBLIC_USE_MOCK_PERCEPTION=true` on the public link
+3. Keep the HF ML Space `/docs` tab ready for the real-ML proof
 
 ## Script
 
@@ -14,19 +14,19 @@
 "We're fully DPDP-compliant — the customer sees exactly what data is collected and why, before they touch anything."
 
 **[0:25]** Click "Start my session".  
-Walk through the permission gate: camera → mic → location.  
-"We request permissions one at a time with plain-language reasons — no legal boilerplate."
+The scripted public session starts without camera permission.
+"The public link uses a deterministic scripted session so judges never get blocked by browser camera permissions."
 
 **[0:40]** Session page loads.  
 Point to: recording indicator (top left), compliance badge (top right), video panel, live form (right), CV indicators (bottom).  
-"The AI agent asks 4 questions. Answers are transcribed in real time and the form fills itself."
+"The AI agent asks the loan questions, and the same event bus used by the real camera path fills the application."
 
 **[0:55]** As mock events replay, the form fields animate in.  
 "Name, employment, income, loan amount — extracted from speech. The CV strip shows liveness and age estimate continuously."
 
 **[1:15]** Click "End call".  
 Processing page spins.  
-"The ML service scores the profile and generates the offer in about 10 seconds."
+"The public web flow uses the reliable instant offer. The separate HF ML Space is live for real Keras scoring."
 
 **[1:30]** Offer page reveals.  
 "₹5,00,000 at 13.5% p.a. — bold, clear, trustworthy."  
@@ -41,6 +41,10 @@ Accepted page.
 "Session reference, cool-off disclosure, KFS download. Done."
 
 **[2:00]** End.
+
+## Real-ML proof
+
+Open the HF ML Space `/docs` or run the `/offer` curl from `docs/hf-deployment.md`. For the recorded demo, also show the local real-camera path with `NEXT_PUBLIC_USE_MOCK_PERCEPTION=false` and `NEXT_PUBLIC_ML_MODE=real`.
 
 ## Fallback (if live demo fails)
 Use the recorded walkthrough at `demo/fallback-recording.mp4` (record after deployment).
