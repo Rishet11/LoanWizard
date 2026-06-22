@@ -7,7 +7,7 @@ A straight-talking set of questions we expect, with honest answers. Grouped by t
 ## Product and problem
 
 **What problem are you solving?**
-Personal loan origination in India is still slow and manual: branch visits, photocopied documents, hand-keyed forms, and multi-day waits. Video-KYC made remote onboarding legal but most products just bolt a video call onto the old paper process. We make the interview itself the application and return an explainable decision in under two minutes.
+Personal loan origination in India is still slow and manual: branch visits, photocopied documents, hand-keyed forms, and multi-day waits. Video-KYC made remote onboarding legal but most products just bolt a video call onto the old paper process. We make the interview itself the application and return an explainable decision in minutes, not days.
 
 **Who is the user?**
 Two users. The borrower, who applies by talking to their camera. And the lender or compliance team, who needs every decision to be auditable, explainable and fair.

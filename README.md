@@ -6,7 +6,7 @@ app_port: 3000
 
 # LoanWizard
 
-> Apply for a loan by talking to your camera. The model watches, listens, verifies, and prices the offer in under two minutes. No branch, no paperwork, no waiting room.
+> Apply for a loan by talking to your camera. The model watches, listens, verifies, and prices the offer in minutes, not days. No branch, no paperwork, no waiting room.
 
 LoanWizard is an AI video loan origination platform. A customer starts a session, grants camera and mic, and answers a short spoken interview. In the browser, a perception layer transcribes speech, fills the application form, runs passive liveness checks, and reads ID documents. A Python service then scores risk and fraud, applies a policy engine, and returns an instant, explainable offer. Every decision is logged with a frozen feature snapshot so it can be replayed and audited. The flow is built to the RBI Video-KYC and DPDP 2023 playbook.
 
@@ -216,10 +216,10 @@ DATABASE_URL=postgresql://...sslmode=require pnpm --filter @loan-wizard/web seed
 - **Operator Console landing.** A single-screen lending terminal rather than a scrolling marketing page.
 - **Voice form-fill** in English and Hindi, with text-to-speech responses.
 - **Passive liveness v2** and on-device Aadhaar and PAN OCR.
-- **Explainable offers** with weighted reason codes and a narrated rationale.
+- **Explainable offers** with reason codes ranked by the risk model's own permutation importance (`apps/ml-service/app/services/risk_scorer.py`) plus a narrated rationale.
 - **Admin dashboards** for sessions, fairness across cohorts, feature drift, and decision replay.
 - **Multi-tenant theming** (for example NBFC Alpha vs NBFC Beta) and full dark mode.
-- **Compliance built in:** DPDP consent banner, right-to-forget endpoint, RBI retention notice, 3-day cool-off, Key Fact Statement.
+- **Compliance built in:** DPDP consent banner (`apps/web/src/components/ConsentBanner.tsx`), right-to-forget endpoint (`apps/web/src/app/api/consent/[sessionId]/forget/route.ts`), RBI retention notice, 3-day cool-off, downloadable Key Fact Statement.
 
 ---
 
@@ -232,6 +232,27 @@ DATABASE_URL=postgresql://...sslmode=require pnpm --filter @loan-wizard/web seed
 | Explainability | Weighted reason codes plus a plain-language narrative on every offer |
 | Auditability | Frozen decision snapshots, model versions, one-click replay |
 | Fair lending | Cohort fairness report and feature drift tracking in admin |
+
+---
+
+## Known limitations
+
+We would rather be precise than oversell. As of this prototype:
+
+- **Age estimation runs in mock mode by default.** The browser age estimator
+  expects a TF.js model under `packages/perception/models/age-mobilenet-tfjs/`,
+  which is not committed. Without it the estimator returns a placeholder age, so
+  the real-camera path uses a mock age signal until weights are dropped in. Risk
+  and fraud scoring still run on real models; only the age input is mocked.
+- **Speech-to-text is browser dependent.** The Web Speech API is reliable in
+  Chrome but unreliable on Safari (low/zero confidence) and disabled by default
+  on Firefox. The Whisper fallback needs a `/transcribe` backend to be wired.
+- **Decision replay uses the current in-memory model**, not an archived snapshot
+  of the model weights. The *inputs* are frozen for faithful replay; if the model
+  is retrained, replayed scores can differ slightly.
+- **The bureau pull is mocked** behind an adapter (no live CIBIL/Experian
+  credentials), and the public judge link runs scripted perception and a reliable
+  mock offer for reliability — see "Live demo flow" above.
 
 ---
 

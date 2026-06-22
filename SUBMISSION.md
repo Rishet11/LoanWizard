@@ -2,7 +2,7 @@
 
 > AI video loan origination: the customer applies by talking to their camera; the
 > system verifies liveness, fills the form by voice, scores risk and fraud with real
-> Keras models, and returns an instant, explainable, auditable offer in under two minutes.
+> Keras models, and returns an instant, explainable, auditable offer in minutes, not days.
 
 **Round 2 (Prototype Development) deadline: 22 Jun 2026, 11:59 PM IST.**
 Submit via **both** the Unstop dashboard (ZIP) and the Google Form.
@@ -96,6 +96,7 @@ Safari and disabled by default on Firefox (use Chrome for the live camera demo).
 
 ## 6. Changes made during finalization
 
+Observability & schema:
 - ML: surfaced previously-silent failures in drift tracking and event emission as logged
   warnings (`apps/ml-service/app/routes/offer.py`); warn when the fraud model loads but
   its scaler is missing (`app/services/fraud_scorer.py`); documented `DATABASE_URL` as
@@ -103,3 +104,19 @@ Safari and disabled by default on Firefox (use Chrome for the live camera demo).
 - Web: `agentNotes` is now `@db.Text` and explicit `@@index([sessionId])` added to the
   child tables (`apps/web/prisma/schema.prisma`); added a runtime `DATABASE_URL` guard
   with a clear error on the session-start route (`apps/web/src/lib/env.ts`).
+
+Correctness & de-gimmicking (full audit pass):
+- ML: reason-code feature importance is now **real model permutation importance**
+  (`risk_scorer.py`) instead of a raw-magnitude proxy, so explanations reflect what the
+  model actually responds to; the heuristic remains only as a fallback.
+- ML: fixed the decision-snapshot `policy_passed` field to store the actual policy result
+  (`offer.py`); added a log when no age signal is present (`policy_engine.py`).
+- ML: the mock bureaus are now genuinely deterministic via a stable SHA-256 seed
+  (`bureau/base.py`), fixing a flaky test caused by Python's per-process `hash()` salting.
+- Web: removed a dead "Interject (stub)" button (copilot); replaced a dead `href="#"`
+  consent link with a real expandable DPDP disclosure; the offer page now shows an error
+  state with retry instead of spinning forever; the admin "Fraud alerts" KPI is a real DB
+  count; fixed a wrong replay-form placeholder; labelled the landing console's simulated
+  metrics/preview so nothing reads as fake live data.
+- Docs: added a "Known limitations" section to the README and softened an unbacked
+  "under two minutes" claim to "in minutes, not days".
