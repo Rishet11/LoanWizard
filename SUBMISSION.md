@@ -14,13 +14,17 @@ Submit via **both** the Unstop dashboard (ZIP) and the Google Form.
 | Required deliverable | Status | Where |
 |---|---|---|
 | Functional Prototype / MVP | ✅ Ready | Full flow perception → ML → offer → admin; runs locally and on HF Spaces |
-| Source Code | ✅ Ready | This monorepo (web, ml-service, perception, contracts) |
-| Technical Documentation | ✅ Ready | `README.md`, `QNA.md`, `docs/architecture-v4.pdf`, `docs/hf-deployment.md`, `prds/`, this file |
-| Presentation Deck (PPT/PDF) | 🟡 Generated in Canva | Editable Canva link delivered in chat — review, then **export to PDF** and include in the ZIP |
+| Source Code | ✅ Ready | This monorepo (web, ml-service, perception, contracts); MIT `LICENSE` |
+| Technical Documentation | ✅ Ready | `docs/technical-documentation.pdf` (+ `README.md`, `QNA.md`, `docs/hf-deployment.md`, `prds/`, this file) |
+| Presentation Deck (PDF) | ✅ Ready | `docs/presentation-deck.pdf` (12 slides, in the repo) |
+| Architecture Diagram | ✅ Ready | `docs/architecture-current.pdf` (as built) + `docs/architecture-v4.pdf` (target platform) |
 | Demo Video | ⬜ To record (you) | 3–5 min screen capture of the live flow + admin (see §5 for a suggested run order) |
 
-**You still need to:** finalize the deck in Canva and export it; record the demo video;
-deploy the two HF Spaces + Neon DB; assemble the ZIP; submit on Unstop + Google Form.
+The deck, technical documentation and both architecture diagrams are committed as PDFs under
+`docs/` (sources in `docs/src/`, regenerated with `docs/render.sh`).
+
+**You still need to:** record the demo video; deploy the two HF Spaces + Neon DB; download/assemble
+the ZIP; submit on Unstop + Google Form.
 
 ---
 

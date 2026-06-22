@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LoanWizard — Prototype Architecture (as built)</title>
+<style>
+  @page { size: A4 landscape; margin: 9mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; background: #fff; }
+  body { padding: 2px 4px; }
+
+  .header { display: flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 3px solid #0a2540; padding-bottom: 7px; margin-bottom: 11px; }
+  .header h1 { font-size: 19px; color: #0a2540; letter-spacing: -0.01em; }
+  .header .sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+  .header .tag { font-size: 9px; background: #059669; color: #fff; padding: 4px 9px; border-radius: 999px; font-weight: 600; }
+
+  .grid { display: grid; grid-template-columns: 1fr 150px; gap: 9px; }
+  .stack { display: flex; flex-direction: column; gap: 7px; }
+
+  .tier { border-radius: 7px; overflow: hidden; border: 1px solid #e2e8f0; }
+  .tier .label { background: #0a2540; color: #fff; padding: 5px 11px; font-weight: 700;
+    font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+    display: flex; justify-content: space-between; align-items: center; }
+  .tier .label .stream { font-weight: 500; opacity: 0.8; letter-spacing: 0.02em; text-transform: none; font-size: 9px; }
+  .tier .body { padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 6px; background: #f8fafc; }
+
+  .t-browser .label { background: #1e40af; }
+  .t-web .label { background: #0a2540; }
+  .t-ml .label { background: #b91c1c; }
+  .t-data .label { background: #047857; }
+
+  .chip { background: #fff; border: 1px solid #cbd5e1; border-radius: 5px; padding: 5px 9px;
+    font-size: 9.5px; line-height: 1.3; display: inline-flex; flex-direction: column; }
+  .chip b { color: #0a2540; font-size: 10px; font-weight: 600; }
+  .chip span { color: #64748b; font-size: 8.5px; margin-top: 1px; }
+  .chip.mock { border-style: dashed; border-color: #f59e0b; background: #fffbeb; }
+  .chip.mock b { color: #b45309; }
+
+  .flow { display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 9px; color: #475569; padding: 1px 0; }
+  .flow .arr { color: #94a3b8; font-size: 12px; }
+  .flow b { color: #0a2540; }
+
+  .rail { display: flex; flex-direction: column; gap: 9px; }
+  .rail .card { border: 1px solid #e2e8f0; border-radius: 7px; padding: 9px; background: #f8fafc; }
+  .rail .card h3 { font-size: 9.5px; color: #0a2540; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+  .rail .card p { font-size: 9px; color: #475569; line-height: 1.4; }
+  .rail .contracts { background: #eef2ff; border-color: #c7d2fe; }
+  .rail .contracts h3 { color: #4338ca; }
+
+  .legend { margin-top: 10px; display: flex; gap: 18px; align-items: center; font-size: 9px; color: #475569; }
+  .legend .key { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .sw { width: 22px; height: 12px; border-radius: 3px; border: 1px solid #cbd5e1; background: #fff; }
+  .legend .sw.mock { border-style: dashed; border-color: #f59e0b; background: #fffbeb; }
+  .caption { margin-top: 7px; font-size: 8px; color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>LoanWizard — Prototype Architecture <span style="font-weight:400;color:#64748b;font-size:13px">(as built)</span></h1>
+    <div class="sub">The system that runs in this repository today. Boxes map to real directories; dashed boxes are mocked or optional by design.</div>
+  </div>
+  <span class="tag">MVP · SHIPPED</span>
+</div>
+
+<div class="grid">
+  <div class="stack">
+
+    <div class="tier t-browser">
+      <div class="label"><span>Browser perception</span><span class="stream">packages/perception · Stream A</span></div>
+      <div class="body">
+        <div class="chip"><b>Camera &amp; mic capture</b><span>getUserMedia · 10s rolling audio buffer</span></div>
+        <div class="chip"><b>Speech-to-text</b><span>Web Speech API → Whisper fallback</span></div>
+        <div class="chip"><b>Liveness (TF.js)</b><span>BlazeFace · landmarks · blink · head-pose</span></div>
+        <div class="chip"><b>Document OCR</b><span>Tesseract.js · Aadhaar &amp; PAN, on-device</span></div>
+        <div class="chip"><b>Age estimate</b><span>@vladmandic/face-api · vendored weights</span></div>
+        <div class="chip"><b>Device fingerprint</b><span>fraud signal input</span></div>
+      </div>
+    </div>
+
+    <div class="flow"><b>PerceptionEvents</b> <span class="arr">&#9660;</span> typed, dispatched to the session store</div>
+
+    <div class="tier t-web">
+      <div class="label"><span>Web application</span><span class="stream">apps/web · Stream C · Next.js 14 App Router</span></div>
+      <div class="body">
+        <div class="chip"><b>Session state machine</b><span>start → interview → decision → accept</span></div>
+        <div class="chip"><b>Operator Console UI</b><span>live gauges · co-pilot · offer card</span></div>
+        <div class="chip"><b>Prisma audit writes</b><span>transcripts · CV signals · consent</span></div>
+        <div class="chip"><b>Admin dashboards</b><span>sessions · fairness · drift · replay</span></div>
+        <div class="chip"><b>i18n · SSE</b><span>English / Hindi · live updates</span></div>
+      </div>
+    </div>
+
+    <div class="flow"><span class="arr">&#9660;</span> <b>POST /offer</b> &nbsp;·&nbsp; server-computed from persisted session data <span class="arr">&#9650;</span> <b>Offer</b></div>
+
+    <div class="tier t-ml">
+      <div class="label"><span>ML decision service</span><span class="stream">apps/ml-service · Stream B · FastAPI</span></div>
+      <div class="body">
+        <div class="chip"><b>Risk MLP</b><span>Keras v1.2.0 · permutation importance</span></div>
+        <div class="chip"><b>Fraud MLP</b><span>Keras v0.1.0</span></div>
+        <div class="chip"><b>Persona classifier</b><span>rules v1.0.0</span></div>
+        <div class="chip"><b>Policy engine</b><span>hard eligibility rules</span></div>
+        <div class="chip"><b>Reason narrator</b><span>weighted codes + plain language</span></div>
+        <div class="chip"><b>Drift · fairness · replay</b><span>replay on exact archived version</span></div>
+        <div class="chip mock"><b>Bureau merge</b><span>mock CIBIL / Experian (adapter)</span></div>
+        <div class="chip mock"><b>LLM narration</b><span>template default · Gemini optional</span></div>
+        <div class="chip mock"><b>Whisper STT model</b><span>opt-in deploy toggle</span></div>
+      </div>
+    </div>
+
+    <div class="flow"><span class="arr">&#9660;</span> decision row + frozen input snapshot + drift sample</div>
+
+    <div class="tier t-data">
+      <div class="label"><span>Data plane</span><span class="stream">PostgreSQL · one database, two ORMs</span></div>
+      <div class="body">
+        <div class="chip"><b>Sessions &amp; audit</b><span>Prisma (web)</span></div>
+        <div class="chip"><b>Decisions &amp; snapshots</b><span>SQLAlchemy (ML) · frozen for replay</span></div>
+        <div class="chip"><b>Model version stamps</b><span>per-decision lineage</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rail">
+    <div class="card contracts">
+      <h3>Shared contracts</h3>
+      <p><b>packages/contracts</b></p>
+      <p style="margin-top:4px">Frozen TypeScript types, Zod schemas and mock data. Every stream consumes the same session, perception and decision shapes, so the three streams integrate without drift.</p>
+    </div>
+    <div class="card">
+      <h3>Build model</h3>
+      <p>Three parallel streams (A/B/C) against the frozen contract package — independent development, typed integration.</p>
+    </div>
+    <div class="card">
+      <h3>Deploy target</h3>
+      <p>Two Docker Spaces (web + ML) on Hugging Face, Neon Postgres for the shared audit trail.</p>
+    </div>
+    <div class="card">
+      <h3>Explainability</h3>
+      <p>Every offer ships reason codes + narrative; the input snapshot is frozen so the decision replays on the same model version.</p>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <span class="key"><span class="sw"></span> Real &amp; running in this repo</span>
+  <span class="key"><span class="sw mock"></span> Mocked / optional by design (adapter or deploy toggle in place)</span>
+  <span style="margin-left:auto;color:#94a3b8">See <b>docs/architecture-v4.pdf</b> for the target production platform.</span>
+</div>
+
+<div class="caption">LoanWizard · AI video loan origination · prototype architecture. Request path is server-authoritative: the client never submits the offer inputs directly — the ML service recomputes from persisted session data.</div>
+
+</body>
+</html>

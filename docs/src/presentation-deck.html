@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LoanWizard — Presentation Deck</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; }
+
+  .slide { position: relative; width: 297mm; height: 210mm; padding: 20mm 22mm 16mm;
+    page-break-after: always; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+  .slide:last-child { page-break-after: auto; }
+
+  .kicker { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #b45309; font-weight: 700; }
+  .stitle { font-size: 34px; color: #0a2540; letter-spacing: -0.02em; line-height: 1.08; margin-top: 6px; }
+  .sub { font-size: 15px; color: #475569; margin-top: 10px; line-height: 1.5; max-width: 230mm; }
+
+  .foot { position: absolute; left: 22mm; right: 22mm; bottom: 9mm; display: flex;
+    justify-content: space-between; align-items: center; font-size: 10px; color: #94a3b8;
+    border-top: 1px solid #e2e8f0; padding-top: 6px; }
+  .foot .brand { font-weight: 700; color: #0a2540; letter-spacing: 0.02em; }
+  .foot .brand span { color: #b45309; }
+
+  .body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+  /* cover */
+  .cover { background: #0a2540; color: #fff; justify-content: center; }
+  .cover .stitle { color: #fff; font-size: 76px; letter-spacing: -0.03em; }
+  .cover .tagline { font-size: 19px; color: #cbd5e1; font-style: italic; margin-top: 18px; max-width: 220mm; line-height: 1.5; }
+  .cover .rule { width: 70px; height: 4px; background: #b45309; margin: 26px 0; }
+  .cover .meta { font-size: 13px; color: #94a3b8; line-height: 1.9; }
+  .cover .meta b { color: #fff; }
+  .cover .kicker { color: #fbbf24; }
+
+  /* columns + cards */
+  .cols { display: grid; gap: 16px; margin-top: 8px; }
+  .c2 { grid-template-columns: 1fr 1fr; }
+  .c3 { grid-template-columns: repeat(3, 1fr); }
+  .c4 { grid-template-columns: repeat(4, 1fr); }
+
+  .card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; background: #f8fafc; }
+  .card .ic { font-size: 13px; font-weight: 800; color: #b45309; letter-spacing: 0.04em; }
+  .card h3 { font-size: 16px; color: #0a2540; margin: 8px 0 6px; }
+  .card p { font-size: 12.5px; color: #475569; line-height: 1.5; }
+
+  .biglist { margin-top: 14px; }
+  .biglist .row { display: flex; gap: 14px; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid #eef2f6; }
+  .biglist .row .num { font-size: 13px; font-weight: 800; color: #fff; background: #0a2540; min-width: 28px; height: 28px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .biglist .row b { font-size: 15px; color: #0a2540; }
+  .biglist .row span { font-size: 13px; color: #475569; }
+  .biglist .row .t { display: flex; flex-direction: column; gap: 2px; }
+
+  .stat { text-align: center; }
+  .stat .big { font-size: 44px; font-weight: 800; color: #0a2540; letter-spacing: -0.02em; }
+  .stat .lbl { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+  .pill { display: inline-block; font-size: 12px; padding: 6px 13px; border-radius: 999px; margin: 3px 4px 3px 0;
+    background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; }
+  .pill.nav { background: #0a2540; color: #fff; border-color: #0a2540; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; }
+  .panel { border-radius: 10px; padding: 16px 18px; }
+  .panel.real { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .panel.mock { background: #fffbeb; border: 1px solid #fde68a; }
+  .panel h3 { font-size: 15px; margin-bottom: 8px; }
+  .panel.real h3 { color: #047857; }
+  .panel.mock h3 { color: #b45309; }
+  .panel ul { margin-left: 16px; }
+  .panel li { font-size: 12px; color: #334155; margin-bottom: 6px; line-height: 1.4; }
+
+  .road { display: flex; align-items: stretch; gap: 0; margin-top: 22px; }
+  .road .step { flex: 1; padding: 14px 12px; border: 1px solid #e2e8f0; border-right: none; background: #f8fafc; }
+  .road .step:last-child { border-right: 1px solid #e2e8f0; border-radius: 0 10px 10px 0; }
+  .road .step:first-child { border-radius: 10px 0 0 10px; }
+  .road .step.now { background: #0a2540; }
+  .road .step.now .ph { color: #fbbf24; } .road .step.now h4, .road .step.now p { color: #fff; }
+  .road .ph { font-size: 11px; font-weight: 800; color: #b45309; letter-spacing: 0.04em; }
+  .road h4 { font-size: 13.5px; color: #0a2540; margin: 5px 0 4px; }
+  .road p { font-size: 10.5px; color: #64748b; line-height: 1.4; }
+
+  .quote { font-size: 22px; color: #0a2540; line-height: 1.45; font-weight: 600; letter-spacing: -0.01em; max-width: 220mm; }
+  .quote .hl { color: #b45309; }
+</style>
+</head>
+<body>
+
+<!-- 1. COVER -->
+<div class="slide cover">
+  <div class="kicker">CodeQuest 2026 · Round 2 · Prototype</div>
+  <div class="stitle">LoanWizard</div>
+  <div class="rule"></div>
+  <div class="tagline">Apply for a loan by talking to your camera. The model watches, listens,
+    verifies, and prices the offer in minutes, not days.</div>
+  <div class="meta" style="margin-top:34px">
+    <b>AI video loan origination for Indian digital lending</b><br>
+    Rishet Mehra &nbsp;·&nbsp; github.com/Rishet11/LoanWizard
+  </div>
+</div>
+
+<!-- 2. PROBLEM -->
+<div class="slide">
+  <div class="kicker">The problem</div>
+  <div class="stitle">Loan origination in India still runs on paper and patience.</div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><div class="ic">SLOW</div><h3>Days, not minutes</h3><p>Branch visits, photocopied documents, hand-keyed forms, multi-day waits before a decision.</p></div>
+      <div class="card"><div class="ic">OPAQUE</div><h3>A black box</h3><p>The applicant is told yes or no with no reason they can see, and no record the lender can defend.</p></div>
+      <div class="card"><div class="ic">BOLTED ON</div><h3>Video as theatre</h3><p>Video-KYC made remote onboarding legal, but most products bolt a call onto the same old paper process.</p></div>
+    </div>
+    <div class="sub" style="margin-top:22px">The decision stays a black box, and the audit trail is thin. That is the gap.</div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>02</span></div>
+</div>
+
+<!-- 3. SOLUTION -->
+<div class="slide">
+  <div class="kicker">The solution</div>
+  <div class="stitle">The interview <em>is</em> the application.</div>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><div class="ic">SPEAK</div><h3>The form fills itself</h3><p>Multilingual speech-to-text extracts name, employment, income, amount and purpose as you talk.</p></div>
+      <div class="card"><div class="ic">VERIFY</div><h3>The camera checks you live</h3><p>Passive liveness — blink, head-pose, texture — plus on-device Aadhaar and PAN OCR. No uploads.</p></div>
+      <div class="card"><div class="ic">PRICE</div><h3>Real-time decision</h3><p>A risk MLP, a fraud MLP, a persona model and a policy engine produce a rate, an EMI and reason codes.</p></div>
+      <div class="card"><div class="ic">PROVE</div><h3>Explainable &amp; replayable</h3><p>Every offer ships reason codes and a narrative; the input snapshot is frozen so it can be re-run.</p></div>
+    </div>
+    <div class="sub" style="margin-top:22px">One continuous experience — and compliance is first class, not an afterthought.</div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>03</span></div>
+</div>
+
+<!-- 4. EXPERIENCE -->
+<div class="slide">
+  <div class="kicker">The experience</div>
+  <div class="stitle">From link to offer, in one sitting.</div>
+  <div class="body">
+    <div class="biglist">
+      <div class="row"><div class="num">1</div><div class="t"><b>Operator Console</b><span>A single-screen lending terminal — live perception gauges, the video feed, one Initiate control.</span></div></div>
+      <div class="row"><div class="num">2</div><div class="t"><b>Permission gate</b><span>Plain-language reasons before camera, mic and location are ever requested.</span></div></div>
+      <div class="row"><div class="num">3</div><div class="t"><b>Video interview</b><span>The agent asks, the customer speaks, the form fills; liveness and fraud signals tick live in a co-pilot panel.</span></div></div>
+      <div class="row"><div class="num">4</div><div class="t"><b>The offer</b><span>A card with rate, EMI, weighted reason codes and a plain-language narrated explanation.</span></div></div>
+      <div class="row"><div class="num">5</div><div class="t"><b>Admin &amp; audit</b><span>Session timeline, fraud and consent evidence, fairness and drift dashboards, one-click decision replay.</span></div></div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>04</span></div>
+</div>
+
+<!-- 5. ARCHITECTURE -->
+<div class="slide">
+  <div class="kicker">Architecture</div>
+  <div class="stitle">Three streams, one frozen contract.</div>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><div class="ic">STREAM A · BROWSER</div><h3>Perception</h3><p>Camera, mic, speech-to-text, TF.js liveness, document OCR, age estimate, device fingerprint. Emits typed events.</p></div>
+      <div class="card"><div class="ic">STREAM C · WEB</div><h3>Next.js 14</h3><p>Session state machine, Operator Console, Prisma audit writes, admin dashboards, i18n, SSE.</p></div>
+      <div class="card"><div class="ic">STREAM B · SERVICE</div><h3>FastAPI</h3><p>Risk MLP, fraud MLP, persona, policy engine, bureau merge, reason narrator, drift, fairness, replay.</p></div>
+    </div>
+    <div class="sub" style="margin-top:20px"><b>Server-authoritative:</b> the client never submits the offer inputs — the ML service recomputes from persisted session data. That is what makes the audit trail trustworthy. &nbsp; <span style="color:#94a3b8">Full diagrams: docs/architecture-current.pdf &amp; architecture-v4.pdf</span></div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>05</span></div>
+</div>
+
+<!-- 6. PIPELINE -->
+<div class="slide">
+  <div class="kicker">The decision pipeline · real, not mocked</div>
+  <div class="stitle">Every offer runs the full chain.</div>
+  <div class="body">
+    <div class="cols c2" style="gap:10px 28px">
+      <div class="biglist" style="margin:0">
+        <div class="row"><div class="num">1</div><div class="t"><b>Bureau merge</b><span>mock CIBIL + Experian behind an adapter</span></div></div>
+        <div class="row"><div class="num">2</div><div class="t"><b>Policy engine</b><span>hard rules: age, income, cap, liveness, face</span></div></div>
+        <div class="row"><div class="num">3</div><div class="t"><b>Risk MLP</b><span>Keras v1.2.0 → risk band</span></div></div>
+        <div class="row"><div class="num">4</div><div class="t"><b>Fraud MLP</b><span>Keras v0.1.0 → fraud score</span></div></div>
+      </div>
+      <div class="biglist" style="margin:0">
+        <div class="row"><div class="num">5</div><div class="t"><b>Persona classifier</b><span>rules v1.0.0 → applicant label</span></div></div>
+        <div class="row"><div class="num">6</div><div class="t"><b>Offer builder</b><span>band + policy → amount, rate, tenure, EMI</span></div></div>
+        <div class="row"><div class="num">7</div><div class="t"><b>Reason narrator</b><span>weighted codes + plain language</span></div></div>
+        <div class="row"><div class="num">8</div><div class="t"><b>Audit + snapshot</b><span>frozen inputs, model versions, drift sample</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>06</span></div>
+</div>
+
+<!-- 7. ML / EXPLAINABILITY -->
+<div class="slide">
+  <div class="kicker">The moat · explainable AI</div>
+  <div class="stitle">Explanations derived from the model — not dressed up to look like it.</div>
+  <div class="body">
+    <div class="split">
+      <div class="panel real">
+        <h3>Permutation importance</h3>
+        <ul>
+          <li>Baseline prediction, then perturb each of 12 features to its scaled mean, re-predict, measure the change.</li>
+          <li>Runs as a single batched predict — cheap enough for every request.</li>
+          <li>Reason codes reflect what the model <b>actually responds to</b>, not raw feature size.</li>
+        </ul>
+      </div>
+      <div class="panel" style="background:#f8fafc;border:1px solid #e2e8f0">
+        <h3 style="color:#0a2540">Replay on the exact version</h3>
+        <ul>
+          <li>Each decision is stamped with its model versions.</li>
+          <li>Weights are archived per version; replay loads the model <b>as it was</b>.</li>
+          <li>Reports <code style="font-size:11px">exact_model_match</code> — and flags it honestly on fallback.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sub" style="margin-top:18px">Models are trained on synthetic data with scripts in the repo, so the committed weights are reproducible from scratch.</div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>07</span></div>
+</div>
+
+<!-- 8. COMPLIANCE -->
+<div class="slide">
+  <div class="kicker">Compliance, built in</div>
+  <div class="stitle">The same flow that prices the loan produces the evidence.</div>
+  <div class="body">
+    <div class="cols c2" style="gap:14px 18px">
+      <div class="card"><h3>RBI Video-KYC</h3><p>Live video interview, liveness checks, recording-retention notice.</p></div>
+      <div class="card"><h3>DPDP Act 2023</h3><p>Explicit consent, disclosed data use, a working right-to-forget endpoint.</p></div>
+      <div class="card"><h3>Auditability</h3><p>Frozen snapshots, per-decision model versions, one-click replay.</p></div>
+      <div class="card"><h3>Fair lending</h3><p>Cohort fairness report and feature-drift tracking in the admin console.</p></div>
+      <div class="card"><h3>Borrower protection</h3><p>3-day cool-off on the accepted screen, downloadable Key Fact Statement.</p></div>
+      <div class="card"><h3>Tamper resistance</h3><p>Offer computed server-side from persisted data — the client can't forge inputs.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>08</span></div>
+</div>
+
+<!-- 9. REAL VS MOCKED -->
+<div class="slide">
+  <div class="kicker">Demo honesty</div>
+  <div class="stitle">What is real, and what is mocked.</div>
+  <div class="body">
+    <div class="split">
+      <div class="panel real">
+        <h3>Real &amp; running</h3>
+        <ul>
+          <li>Full ML pipeline: risk MLP, fraud MLP, persona, policy, narrator</li>
+          <li>Permutation-importance reason codes</li>
+          <li>Audit + frozen snapshots + replay on exact version</li>
+          <li>Browser perception locally: liveness, OCR, age, speech</li>
+          <li>Admin: sessions, fairness, drift, replay</li>
+        </ul>
+      </div>
+      <div class="panel mock">
+        <h3>Mocked / optional by design</h3>
+        <ul>
+          <li>Bureau pull — adapter in place, no commercial credentials</li>
+          <li>LLM narration — template default, Gemini optional</li>
+          <li>Whisper STT model — opt-in deploy toggle (fallback wired)</li>
+          <li>Public judge link — scripted perception + reliable mock offer</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sub" style="margin-top:16px">We would rather be precise than oversell. The real camera and ML path runs locally and the ML Space serves the live <code>/offer</code>, <code>/docs</code> and <code>/fairness</code> endpoints.</div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>09</span></div>
+</div>
+
+<!-- 10. STACK -->
+<div class="slide">
+  <div class="kicker">Engineering</div>
+  <div class="stitle">A small, honest, reproducible stack.</div>
+  <div class="body">
+    <div class="cols c3" style="margin-bottom:6px">
+      <div class="stat"><div class="big">105</div><div class="lbl">ML service tests passing</div></div>
+      <div class="stat"><div class="big">33 / 33</div><div class="lbl">perception tests passing</div></div>
+      <div class="stat"><div class="big">0</div><div class="lbl">secrets needed to build the web app</div></div>
+    </div>
+    <div style="margin-top:18px">
+      <span class="pill nav">Next.js 14</span><span class="pill nav">FastAPI</span><span class="pill nav">TensorFlow / Keras</span>
+      <span class="pill">TensorFlow.js</span><span class="pill">scikit-learn</span><span class="pill">Tesseract.js</span>
+      <span class="pill">@vladmandic/face-api</span><span class="pill">PostgreSQL</span><span class="pill">Prisma</span>
+      <span class="pill">SQLAlchemy</span><span class="pill">Zod</span><span class="pill">pnpm + Turborepo</span>
+      <span class="pill">Docker</span><span class="pill">Hugging Face Spaces</span><span class="pill">Neon</span>
+    </div>
+    <div class="sub" style="margin-top:20px">Three parallel streams against a frozen contract package. ML service is stateless and scales horizontally; perception runs on the client.</div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>10</span></div>
+</div>
+
+<!-- 11. ROADMAP -->
+<div class="slide">
+  <div class="kicker">Roadmap</div>
+  <div class="stitle">The contract boundary carries from MVP to platform.</div>
+  <div class="body">
+    <div class="road">
+      <div class="step now"><div class="ph">NOW</div><h4>MVP</h4><p>Real decision pipeline, perception, audit, replay, admin.</p></div>
+      <div class="step"><div class="ph">v1</div><h4>Real bureau + auth</h4><p>Live CIBIL/Experian behind the adapter; object store; OIDC.</p></div>
+      <div class="step"><div class="ph">v2</div><h4>Event spine + serving</h4><p>Kafka, TF Serving, feature store, vector DB.</p></div>
+      <div class="step"><div class="ph">v3</div><h4>LLM + fraud ML</h4><p>Gemma narration, graph fraud, active learning.</p></div>
+      <div class="step"><div class="ph">v4</div><h4>Platform</h4><p>Multi-tenant, disbursement, servicing, co-lending.</p></div>
+    </div>
+    <div class="sub" style="margin-top:26px">Near-term: deepfake-resistant liveness via the optional texture model, and a lender console for human-in-the-loop review on borderline decisions.</div>
+  </div>
+  <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>11</span></div>
+</div>
+
+<!-- 12. CLOSE -->
+<div class="slide cover" style="justify-content:center">
+  <div class="kicker">In one line</div>
+  <div class="quote" style="margin-top:18px;color:#fff">A customer talks to their camera and walks away with an
+    <span class="hl">explainable, auditable, replayable</span> loan offer — in minutes, not days.</div>
+  <div class="rule"></div>
+  <div class="meta">
+    <b>Repository:</b> github.com/Rishet11/LoanWizard<br>
+    <b>Docs:</b> README.md · QNA.md · docs/technical-documentation.pdf · docs/architecture-current.pdf<br>
+    <b>Run it:</b> pnpm install · docker compose up -d · prisma db push · pnpm --filter @loan-wizard/web dev
+  </div>
+</div>
+
+</body>
+</html>

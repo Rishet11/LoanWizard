@@ -23,6 +23,29 @@ LoanWizard is an AI video loan origination platform. A customer starts a session
 
 ---
 
+## For judges and reviewers — start here
+
+A short path through the project:
+
+1. **The pitch** — [`docs/presentation-deck.pdf`](docs/presentation-deck.pdf) (12 slides).
+2. **The technical write-up** — [`docs/technical-documentation.pdf`](docs/technical-documentation.pdf).
+3. **The system** — [`docs/architecture-current.pdf`](docs/architecture-current.pdf) (as built) and [`docs/architecture-v4.pdf`](docs/architecture-v4.pdf) (target platform).
+4. **Run it** — four commands in [Quick start](#quick-start). The web app builds with no database and no secrets.
+5. **The hard questions** — [`QNA.md`](QNA.md) answers them candidly, including what is real and what is mocked.
+
+| Document | What it covers |
+|---|---|
+| [`docs/technical-documentation.pdf`](docs/technical-documentation.pdf) | Full write-up: architecture, ML, perception, compliance, how to run |
+| [`docs/presentation-deck.pdf`](docs/presentation-deck.pdf) | 12-slide pitch deck |
+| [`docs/architecture-current.pdf`](docs/architecture-current.pdf) | As-built architecture for this repository |
+| [`docs/architecture-v4.pdf`](docs/architecture-v4.pdf) | Target production platform |
+| [`QNA.md`](QNA.md) · [`SUBMISSION.md`](SUBMISSION.md) | Reviewer Q&A · deliverables and verified build matrix |
+| [`docs/hf-deployment.md`](docs/hf-deployment.md) | Hugging Face + Neon deployment runbook |
+
+> The PDFs are generated from the HTML sources in [`docs/src/`](docs/src) via `docs/render.sh`, so they regenerate from source.
+
+---
+
 ## The problem
 
 Personal loan origination in India still runs on branch visits, photocopied documents, manual data entry, and multi-day waits. Video-KYC made remote onboarding legal, but most implementations bolt a video call onto the same slow paper process. The decision stays a black box, and the audit trail is thin.
