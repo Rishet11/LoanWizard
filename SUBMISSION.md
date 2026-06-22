@@ -7,24 +7,30 @@
 **Round 2 (Prototype Development) deadline: 22 Jun 2026, 11:59 PM IST.**
 Submit via **both** the Unstop dashboard (ZIP) and the Google Form.
 
+## Live links
+
+- **Live app (frontend):** https://rishet11-loanwizard-web.hf.space/
+- **Live ML API (backend):** https://rishet11-loanwizard-ml.hf.space/ (`/health`, `/docs`)
+- **Presentation, demo video and PDFs:** https://drive.google.com/drive/folders/1-aanpEn7EELmkbgKpguxsXyxLnKeT2ai?usp=sharing
+
 ---
 
 ## 1. Deliverables checklist
 
 | Required deliverable | Status | Where |
 |---|---|---|
-| Functional Prototype / MVP | ✅ Ready | Full flow perception → ML → offer → admin; runs locally and on HF Spaces |
+| Functional Prototype / MVP | ✅ Ready | Full flow perception → ML → offer → admin; live at https://rishet11-loanwizard-web.hf.space/ and runs locally |
 | Source Code | ✅ Ready | This monorepo (web, ml-service, perception, contracts); MIT `LICENSE` |
-| Technical Documentation | ✅ Ready | `docs/technical-documentation.pdf` (+ `README.md`, `QNA.md`, `docs/DEPLOYMENT.md`, `prds/`, this file) |
-| Presentation Deck (PDF) | ✅ Ready | `docs/presentation-deck.pdf` (12 slides, in the repo) |
+| Technical Documentation | ✅ Ready | `docs/technical-documentation.pdf` (+ `README.md`, `QNA.md`, `docs/DEPLOYMENT.md`, this file) |
+| Presentation Deck (PDF) | ✅ Ready | `docs/presentation-deck.pdf` (12 slides, in the repo) + the Drive folder above |
 | Architecture Diagram | ✅ Ready | `docs/architecture-current.pdf` (as built) + `docs/architecture-target.pdf` (target platform) |
-| Demo Video | ⬜ To record (you) | 3 to 5 min screen capture of the live flow + admin (see §5 for a suggested run order) |
+| Demo Video | ✅ Ready | In the Google Drive folder linked above |
 
 The deck, technical documentation and both architecture diagrams are committed as PDFs under
-`docs/` (sources in `docs/src/`, regenerated with `docs/generate-pdfs.sh`).
+`docs/` (sources in `docs/src/`).
 
-**You still need to:** record the demo video; deploy the two HF Spaces + Neon DB; download/assemble
-the ZIP; submit on Unstop + Google Form.
+**You still need to:** download/assemble the ZIP and submit on Unstop + Google Form. The two HF
+Spaces and the demo video are already live (links above).
 
 ---
 

@@ -23,6 +23,18 @@ LoanWizard is an AI video loan origination platform. A customer starts a session
 
 ---
 
+## Live links
+
+| What | Where |
+|---|---|
+| **Live app (frontend)** | https://rishet11-loanwizard-web.hf.space/ |
+| **Live ML API (backend)** | https://rishet11-loanwizard-ml.hf.space/ |
+| **Presentation, demo video and PDFs** | [Google Drive folder](https://drive.google.com/drive/folders/1-aanpEn7EELmkbgKpguxsXyxLnKeT2ai?usp=sharing) |
+
+The frontend runs the full flow with scripted perception for a reliable public demo. The ML API exposes the real Keras pipeline: try `https://rishet11-loanwizard-ml.hf.space/health` and `https://rishet11-loanwizard-ml.hf.space/docs`.
+
+---
+
 ## For judges and reviewers, start here
 
 A short path through the project:
@@ -32,7 +44,7 @@ A short path through the project:
 3. **The system:** [`docs/architecture-current.pdf`](docs/architecture-current.pdf) (as built) and [`docs/architecture-target.pdf`](docs/architecture-target.pdf) (target platform).
 4. **Run it:** four commands in [Quick start](#quick-start). The web app builds with no database and no secrets.
 5. **The hard questions:** [`QNA.md`](QNA.md) answers them candidly, including what is real and what is mocked.
-6. **The live ML service:** already deployed at [Hugging Face](https://huggingface.co/spaces/Rishet11/loanwizard-ml), health check at `https://rishet11-loanwizard-ml.hf.space/health`. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+6. **The live system:** the app is running at https://rishet11-loanwizard-web.hf.space/ and the ML API at https://rishet11-loanwizard-ml.hf.space/ (health check at `/health`, interactive docs at `/docs`). See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 | Document | What it covers |
 |---|---|
@@ -41,9 +53,9 @@ A short path through the project:
 | [`docs/architecture-current.pdf`](docs/architecture-current.pdf) | As-built architecture for this repository |
 | [`docs/architecture-target.pdf`](docs/architecture-target.pdf) | Target production platform |
 | [`QNA.md`](QNA.md) and [`SUBMISSION.md`](SUBMISSION.md) | Reviewer Q&A, deliverables and verified build matrix |
-| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | The live HF ML Space, plus a runbook for deploying your own copy |
+| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | The live HF Spaces, plus a runbook for deploying your own copy |
 
-> The PDFs are generated from the HTML sources in [`docs/src/`](docs/src) via `docs/generate-pdfs.sh`, so they regenerate from source.
+> The PDFs in `docs/` are rendered from the HTML sources in [`docs/src/`](docs/src), so they regenerate from source.
 
 ---
 
@@ -300,7 +312,7 @@ We would rather be precise than oversell. As of this prototype:
 
 ## Team and build model
 
-Built as three parallel streams against a frozen shared contract package, so perception, ML and web could be developed independently and integrated through typed events and a single offer API. See `prds/` for the original build briefs and `docs/architecture-target.pdf` for the target architecture.
+Built as three parallel streams against a frozen shared contract package, so perception, ML and web could be developed independently and integrated through typed events and a single offer API. See `docs/architecture-target.pdf` for the target architecture.
 
 ## Roadmap
 

@@ -1,5 +1,11 @@
 # LoanWizard - Prototype One-Pager
 
+## Live links
+
+- Live app: https://rishet11-loanwizard-web.hf.space/
+- Live ML API: https://rishet11-loanwizard-ml.hf.space/ (`/health`, `/docs`)
+- Deck, demo video and PDFs: https://drive.google.com/drive/folders/1-aanpEn7EELmkbgKpguxsXyxLnKeT2ai?usp=sharing
+
 ## What It Is
 
 LoanWizard is an AI video loan-origination prototype for Indian digital lending.
