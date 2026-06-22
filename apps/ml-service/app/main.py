@@ -31,6 +31,22 @@ app.include_router(models_route.router)
 app.include_router(transcribe.router)
 
 
+@app.get("/")
+def root() -> dict[str, object]:
+    return {
+        "name": "LoanWizard ML Service",
+        "status": "running",
+        "docs": "/docs",
+        "health": "/health",
+        "endpoints": [
+            "/offer",
+            "/fairness/report",
+            "/drift/monthly_income",
+            "/models",
+        ],
+    }
+
+
 @app.on_event("startup")
 def _startup() -> None:
     from app.deps import get_risk_scorer, get_persona_classifier, get_fraud_scorer, get_narrator, get_policy_engine
