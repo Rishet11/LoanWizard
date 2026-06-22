@@ -27,6 +27,9 @@ startBtn.addEventListener('click', async () => {
 
   engine = new PerceptionEngine({
     sessionId: `demo-${Date.now()}`,
+    // Demo serves packages/perception/models at the web root (vite publicDir),
+    // so face-api weights resolve at /face-api here (vs /models/face-api in the web app).
+    ageModelUrl: '/face-api',
     onEvent: (e) => {
       log(e);
       if (e.type === 'permission_granted') setStatus('running');

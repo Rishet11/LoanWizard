@@ -1,53 +1,53 @@
-import * as tf from '@tensorflow/tfjs';
+import * as faceapi from '@vladmandic/face-api';
 
 export interface AgeEstimate {
   age: number;
   confidence: number;
 }
 
-const MODEL_URL = '/models/age-mobilenet-tfjs/model.json';
+// Directory that serves the face-api weight manifests + .bin files. In the web
+// app these live in /public/models/face-api; the weights are vendored from the
+// @vladmandic/face-api npm package (no external download needed).
+const DEFAULT_MODEL_URL = '/models/face-api';
 const ROLLING_WINDOW = 5;
 
 export class AgeEstimator {
-  private model: tf.LayersModel | null = null;
   private samples: number[] = [];
   private modelUrl: string;
-  private useMock: boolean;
+  private useMock = false;
+  private ready = false;
 
   constructor(modelUrl?: string) {
-    this.modelUrl = modelUrl ?? MODEL_URL;
-    this.useMock = false;
+    this.modelUrl = modelUrl ?? DEFAULT_MODEL_URL;
   }
 
   async load(): Promise<void> {
     try {
-      this.model = await tf.loadLayersModel(this.modelUrl);
-    } catch {
-      console.warn('[AgeEstimator] Model load failed, using mock estimator');
+      await faceapi.nets.tinyFaceDetector.loadFromUri(this.modelUrl);
+      await faceapi.nets.ageGenderNet.loadFromUri(this.modelUrl);
+      this.ready = true;
+    } catch (err) {
+      console.warn('[AgeEstimator] face-api model load failed, using mock estimator', err);
       this.useMock = true;
     }
   }
 
   async estimate(video: HTMLVideoElement): Promise<AgeEstimate | null> {
     if (this.useMock) {
-      // Mock: return a plausible age each call; no declared_age available here
+      // Graceful fallback if weights are unavailable so the session never breaks.
       const mockAge = 28 + (Math.random() * 6 - 3);
       return this.addSample(mockAge, 0.5);
     }
-    if (!this.model) return null;
+    if (!this.ready) return null;
 
     try {
-      const imageTensor = tf.browser.fromPixels(video)
-        .resizeBilinear([224, 224])
-        .expandDims(0)
-        .div(255.0);
+      const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.4 });
+      const result = await faceapi.detectSingleFace(video, options).withAgeAndGender();
+      if (!result) return null;
 
-      const pred = this.model.predict(imageTensor) as tf.Tensor;
-      const ageValue = (await pred.data())[0];
-
-      tf.dispose([imageTensor, pred]);
-
-      return this.addSample(ageValue, 0.82);
+      // Use the face-detection score as the per-frame confidence.
+      const confidence = Math.max(0.3, Math.min(1, result.detection.score));
+      return this.addSample(result.age, confidence);
     } catch {
       return null;
     }
@@ -58,7 +58,7 @@ export class AgeEstimator {
     if (this.samples.length > ROLLING_WINDOW) this.samples.shift();
 
     const avg = this.samples.reduce((a, b) => a + b, 0) / this.samples.length;
-    // Confidence grows as window fills
+    // Confidence grows as the rolling window fills.
     const confidence = baseConfidence * (this.samples.length / ROLLING_WINDOW);
     return { age: Math.round(avg), confidence };
   }

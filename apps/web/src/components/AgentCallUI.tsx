@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { PerceptionEvent, FormData, CVSignal } from '@loan-wizard/contracts';
 import { usePerception } from '@loan-wizard/perception';
+import { config } from '../lib/config';
 import { VideoPanel } from './VideoPanel';
 import { FormSidePanel } from './FormSidePanel';
 import { CVIndicatorStrip } from './CVIndicatorStrip';
@@ -82,6 +83,8 @@ export function AgentCallUI({ sessionId }: { sessionId: string }) {
   const { videoRef, start, status, error: perceptionError } = usePerception({
     sessionId,
     onEvent: handleEvent,
+    // When set, low-confidence Web Speech results fall back to server-side Whisper.
+    sttFallbackUrl: config.transcribeUrl || undefined,
   });
 
   useEffect(() => { start(); }, [start]);

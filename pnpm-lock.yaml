@@ -151,6 +151,9 @@ importers:
       '@tensorflow/tfjs':
         specifier: 4.19.0
         version: 4.19.0(seedrandom@3.0.5)
+      '@vladmandic/face-api':
+        specifier: ^1.7.13
+        version: 1.7.15
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -2965,6 +2968,11 @@ packages:
       loupe: 2.3.7
       pretty-format: 29.7.0
     dev: true
+
+  /@vladmandic/face-api@1.7.15:
+    resolution: {integrity: sha512-WDMmK3CfNLo8jylWqMoQgf4nIst3M0fzx1dnac96wv/dvMTN4DxC/Pq1DGtduDk1lktCamQ3MIDXFnvrdHTXDw==}
+    engines: {node: '>=14.0.0'}
+    dev: false
 
   /@webgpu/types@0.1.38:
     resolution: {integrity: sha512-7LrhVKz2PRh+DD7+S+PVaFd5HxaWQvoMqBbsV9fNJO1pjUs1P8bM2vQVNfk+3URTqbuTI7gkXi0rfsN0IadoBA==}
