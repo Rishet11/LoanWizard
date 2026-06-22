@@ -23,7 +23,7 @@ model Session {
   loanPurpose        String?
   endedAt            DateTime?
   offerJson          String?
-  agentNotes            String?
+  agentNotes            String?   @db.Text
   deletedAt             DateTime?
   deviceFingerprint     String?   // JSON blob from Stream A device_fingerprint event
   documentCapturesJson  String?   // JSON array of document_captured payloads
@@ -44,6 +44,8 @@ model Transcript {
   timestamp  DateTime
   questionId String?
   session    Session  @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId])
 }
 
 model CvSignal {
@@ -58,6 +60,8 @@ model CvSignal {
   headPoseDelta    Float
   textureScore     Float?
   session          Session  @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId])
 }
 
 model ConsentRecord {
@@ -68,6 +72,8 @@ model ConsentRecord {
   audioRef    String?
   timestamp   DateTime
   session     Session  @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId])
 }
 
 model VideoBlob {
@@ -77,6 +83,8 @@ model VideoBlob {
   durationSec Int
   checksum    String
   session     Session  @relation(fields: [sessionId], references: [id])
+
+  @@index([sessionId])
 }
 
 // Stream B (ML service) owns these tables — managed by SQLAlchemy, not Prisma

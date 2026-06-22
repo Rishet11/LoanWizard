@@ -77,8 +77,8 @@ def create_offer(
             "fraud_score": fraud_output.fraud_score,
             "risk_score": risk_output.risk_score,
         })
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Drift tracking failed for session %s: %s", req.session_id, exc)
 
     # Events (non-blocking)
     try:
@@ -87,8 +87,8 @@ def create_offer(
             req.model_dump(), offer.model_dump(), model_versions.model_dump(),
         )
         event_emitter.emit_fraud_alert(req.session_id, fraud_output.fraud_score, fraud_output.fraud_signals)
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Event emit failed for session %s: %s", req.session_id, exc)
 
     decision_id = _audit(db, req, policy_result, risk_output, persona_output, fraud_output, offer, model_versions)
     _save_snapshot(db, decision_id, req, offer)

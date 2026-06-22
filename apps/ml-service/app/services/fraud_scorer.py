@@ -35,6 +35,11 @@ class FraudScorer:
                 data = np.load(str(SCALER_PATH))
                 self._mean = data["mean"]
                 self._scale = data["scale"]
+            elif self._model is not None:
+                logger.warning(
+                    "Fraud model loaded but scaler missing at %s — scoring on raw features",
+                    SCALER_PATH,
+                )
         except Exception as exc:
             logger.warning("Fraud model failed to load (%s) — using heuristic", exc)
 

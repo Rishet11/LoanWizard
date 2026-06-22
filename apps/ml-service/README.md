@@ -16,7 +16,9 @@ Do not modify this app from Stream A or Stream C.
 
 Deploy this folder as a Docker Space. Configure these Space secrets/variables:
 
-- `DATABASE_URL`: Neon Postgres URL with SSL.
+- `DATABASE_URL`: Neon Postgres URL with SSL. Required for audit persistence —
+  `/offer` still returns a valid offer without it, but the decision row and
+  frozen replay snapshot will not be written (a warning is logged instead).
 - `USE_MOCK_BUREAU=true`
 - `PERSONA_STRATEGY=rules_first`
 - `ENABLE_GEMINI_FALLBACK=false`

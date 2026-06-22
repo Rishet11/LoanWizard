@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '../../../../lib/db';
 import { initSession } from '../../../../lib/session-store';
+import { assertDatabaseUrl } from '../../../../lib/env';
 
 const bodySchema = z.object({
   campaign_source: z.enum(['sms', 'whatsapp', 'email', 'direct']).default('direct'),
@@ -9,6 +10,8 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  assertDatabaseUrl();
+
   const body = bodySchema.safeParse(await req.json());
   if (!body.success) return NextResponse.json({ error: 'invalid body' }, { status: 400 });
 
