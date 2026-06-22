@@ -9,6 +9,8 @@ import {
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useT } from '../components/I18nProvider';
 
+const campaignSources = new Set(['sms', 'whatsapp', 'email', 'direct']);
+
 /* ─────────── live value hooks ─────────── */
 
 function useClock() {
@@ -49,17 +51,23 @@ export default function OperatorConsole() {
   async function startSession() {
     setLoading(true);
     try {
+      const src = new URLSearchParams(window.location.search).get('src') ?? 'direct';
       const res = await fetch('/api/session/start', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          campaign_source: new URLSearchParams(window.location.search).get('src') ?? 'direct',
+          campaign_source: campaignSources.has(src) ? src : 'direct',
           device_user_agent: navigator.userAgent,
         }),
       });
-      const { session_id } = await res.json();
-      router.push(`/session/${session_id}`);
-    } catch {
+      if (!res.ok) throw new Error(`session start failed: ${res.status}`);
+      const data = (await res.json()) as { session_id?: string };
+      if (!data.session_id) throw new Error('session start response missing session_id');
+      const nextUrl = `/session/${data.session_id}`;
+      router.push(nextUrl);
+      window.location.assign(nextUrl);
+    } catch (err) {
+      console.error(err);
       setLoading(false);
     }
   }
