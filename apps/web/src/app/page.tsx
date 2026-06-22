@@ -218,11 +218,16 @@ function Marquee() {
   const items = ['DISBURSED TODAY ₹4.2 Cr', 'AVG DECISION 1:48', 'APPROVAL 71%', 'SESSIONS LIVE 38', 'CIBIL + EXPERIAN'];
   const row = [...items, ...items];
   return (
-    <div className="overflow-hidden rounded-[var(--radius-sm)] border border-(--color-bg)/10 bg-black/15">
-      <div className="ticker-track flex w-max gap-8 py-1.5 text-[10px] tracking-wide text-(--color-bg)/55">
-        {row.map((it, i) => (
-          <span key={i} className="flex items-center gap-8 whitespace-nowrap">{it}<span className="text-(--color-accent)">◆</span></span>
-        ))}
+    <div className="flex items-stretch overflow-hidden rounded-[var(--radius-sm)] border border-(--color-bg)/10 bg-black/15">
+      <span className="shrink-0 flex items-center px-2.5 text-[9px] uppercase tracking-[0.2em] text-(--color-bg)/45 border-r border-(--color-bg)/10 bg-black/20">
+        simulated metrics
+      </span>
+      <div className="overflow-hidden">
+        <div className="ticker-track flex w-max gap-8 py-1.5 px-3 text-[10px] tracking-wide text-(--color-bg)/55">
+          {row.map((it, i) => (
+            <span key={i} className="flex items-center gap-8 whitespace-nowrap">{it}<span className="text-(--color-accent)">◆</span></span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -284,7 +289,7 @@ function Headline({ t }: { t: (k: string) => string }) {
   return (
     <div className="rounded-[var(--radius-md)] border border-(--color-bg)/10 bg-(--color-bg)/[0.03] px-4 py-3.5">
       <p className="font-display text-[clamp(1.5rem,2.6vw,2.1rem)] font-semibold leading-tight text-(--color-bg)">
-        A loan decision, <span className="text-(--color-accent)">settled in 120s.</span>
+        A loan decision, <span className="text-(--color-accent)">settled in minutes.</span>
       </p>
       <p className="text-[12px] text-(--color-bg)/55 mt-1.5 max-w-lg leading-relaxed">
         {t('landing.sub')} You speak, the camera verifies, the model prices. Watch it decide in real time, then start your own.

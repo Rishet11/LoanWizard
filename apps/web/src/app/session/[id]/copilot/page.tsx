@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Flag, MessageSquare, PhoneOff, StickyNote } from 'lucide-react';
+import { Flag, PhoneOff, StickyNote } from 'lucide-react';
 import { Badge } from '../../../../components/ui/Badge';
 import { Card, CardHeader, CardBody } from '../../../../components/ui/Card';
 import { Button } from '../../../../components/ui/Button';
@@ -130,9 +130,6 @@ export default function CopilotPage({ params }: { params: { id: string } }) {
                 aria-label="Flag this session"
               >
                 <Flag size={14} aria-hidden="true" /> {flagged ? 'Flagged' : 'Flag session'}
-              </Button>
-              <Button variant="secondary" size="sm" className="w-full" aria-label="Interject (stub)">
-                <MessageSquare size={14} aria-hidden="true" /> Interject (stub)
               </Button>
               <Button
                 variant="ghost"

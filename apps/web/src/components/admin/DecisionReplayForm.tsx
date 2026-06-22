@@ -38,7 +38,7 @@ export function DecisionReplayForm({ sessionId, originalOffer }: { sessionId: st
               type="number"
               value={income}
               onChange={(e) => setIncome(e.target.value)}
-              placeholder={String(originalOffer.amount ?? '')}
+              placeholder="e.g. 85000"
               className="w-full px-3 py-1.5 text-sm border border-(--color-muted)/20 rounded-[var(--radius-sm)] bg-(--color-bg) text-(--color-fg) focus:outline-none focus:border-(--color-brand)"
             />
           </div>
@@ -48,6 +48,7 @@ export function DecisionReplayForm({ sessionId, originalOffer }: { sessionId: st
               type="number"
               value={loanAmt}
               onChange={(e) => setLoanAmt(e.target.value)}
+              placeholder="e.g. 500000"
               className="w-full px-3 py-1.5 text-sm border border-(--color-muted)/20 rounded-[var(--radius-sm)] bg-(--color-bg) text-(--color-fg) focus:outline-none focus:border-(--color-brand)"
             />
           </div>

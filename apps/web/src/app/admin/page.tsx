@@ -13,8 +13,16 @@ async function getKPIs() {
     prisma.session.count({ where: { status: 'offered', deletedAt: null } }),
     prisma.session.count({ where: { status: 'accepted', deletedAt: null } }),
   ]);
+  // High-fraud decisions (>= 0.5). The decisions table is owned by the ML
+  // service; tolerate it not existing yet on a fresh database.
+  let fraudAlerts = 0;
+  try {
+    fraudAlerts = await prisma.decision.count({ where: { fraudScore: { gte: 0.5 } } });
+  } catch {
+    fraudAlerts = 0;
+  }
   const approvalRate = offered > 0 ? Math.round((accepted / offered) * 100) : 0;
-  return { todayCount, total, approvalRate };
+  return { todayCount, total, approvalRate, fraudAlerts };
 }
 
 export default async function AdminDashboard() {
@@ -28,7 +36,7 @@ export default async function AdminDashboard() {
         <KpiCard label="Sessions today" value={kpis.todayCount} />
         <KpiCard label="Total sessions" value={kpis.total} />
         <KpiCard label="Approval rate" value={`${kpis.approvalRate}%`} />
-        <KpiCard label="Fraud alerts" value={0} />
+        <KpiCard label="Fraud alerts" value={kpis.fraudAlerts} />
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

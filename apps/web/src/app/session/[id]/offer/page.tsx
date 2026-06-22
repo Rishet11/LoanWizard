@@ -9,6 +9,7 @@ import { Spinner } from '../../../../components/ui/Spinner';
 export default function OfferPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [offer, setOffer] = useState<Offer | null>(null);
+  const [error, setError] = useState(false);
   const [showKfs, setShowKfs] = useState(false);
   const [showESign, setShowESign] = useState(false);
 
@@ -18,10 +19,27 @@ export default function OfferPage({ params }: { params: { id: string } }) {
       if (stored) { setOffer(JSON.parse(stored)); return; }
     } catch {}
     fetch(`/api/session/${params.id}/offer`)
-      .then((r) => r.ok ? r.json() : null)
-      .then((o) => { if (o) setOffer(o); })
-      .catch(() => {});
+      .then((r) => (r.ok ? r.json() : null))
+      .then((o) => { if (o) setOffer(o); else setError(true); })
+      .catch(() => setError(true));
   }, [params.id]);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center max-w-sm">
+          <p className="text-(--color-fg) font-semibold mb-2">We couldn’t load your offer</p>
+          <p className="text-(--color-muted) text-sm mb-6">The decision service was unavailable. Please try again.</p>
+          <button
+            onClick={() => router.push(`/session/${params.id}/processing`)}
+            className="px-6 py-2 bg-(--color-brand) text-(--color-brand-fg) rounded-[var(--radius-md)] font-medium hover:opacity-90 transition-opacity"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!offer) return <div className="min-h-screen flex items-center justify-center"><Spinner className="w-10 h-10" /></div>;
 
