@@ -88,6 +88,16 @@ def run():
     print(f"Model saved to {keras_path} and {MODEL_PATH}")
     print(f"Scaler saved to {SCALER_PATH}")
 
+    # Also archive under the current version so past decisions can be replayed on
+    # the exact weights that produced them.
+    from app.services.risk_scorer import VERSION as RISK_VERSION
+    archive_dir = MODEL_DIR / "archive" / RISK_VERSION
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    model.save(str(archive_dir / "keras_model.keras"))
+    model.save(str(archive_dir / "keras_model.h5"))
+    np.savez(str(archive_dir / "scaler_params.npz"), mean=mean, scale=scale)
+    print(f"Archived risk model v{RISK_VERSION} to {archive_dir}")
+
 
 if __name__ == "__main__":
     run()

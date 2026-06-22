@@ -14,9 +14,10 @@ from app.deps import (
     OfferBuilderDep,
     PersonaDep,
     PolicyDep,
-    RiskScorerDep,
     BureauDep,
 )
+from app.services.model_loader import risk_scorer_for_version
+from app.services.risk_scorer import VERSION as RISK_VERSION
 from app.routes.debug import _infer_geo_tier
 from app.schemas import (
     CVSignalsSummary,
@@ -82,7 +83,6 @@ def replay_decision(
     decision_id: int,
     body: ReplayRequest,
     db: DbDep,
-    risk_scorer: RiskScorerDep,
     policy_engine: PolicyDep,
     persona_clf: PersonaDep,
     offer_builder: OfferBuilderDep,
@@ -117,8 +117,15 @@ def replay_decision(
     original_req = _build_req(frozen)
     replayed_req = _build_req(merged)
 
+    # Replay on the EXACT risk model version that produced the decision, falling
+    # back to the current production model (flagged) if it isn't archived.
+    recorded_versions = snap.model_versions_at_decision or {}
+    recorded_risk_version = recorded_versions.get("risk")
+    versioned_scorer, exact_model_match = risk_scorer_for_version(recorded_risk_version)
+    model_version_used = recorded_risk_version if exact_model_match else RISK_VERSION
+
     original_result = snap.output_snapshot
-    replayed_result = _run_pipeline(replayed_req, risk_scorer, policy_engine, persona_clf, offer_builder, bureau)
+    replayed_result = _run_pipeline(replayed_req, versioned_scorer, policy_engine, persona_clf, offer_builder, bureau)
 
     diff = _compute_diff(
         {k: v for k, v in original_result.get("offer", {}).items() if k not in ("generated_at", "reason_codes")},
@@ -129,4 +136,6 @@ def replay_decision(
         original=original_result,
         replayed=replayed_result,
         diff=diff,
+        model_version_used=model_version_used,
+        exact_model_match=exact_model_match,
     )

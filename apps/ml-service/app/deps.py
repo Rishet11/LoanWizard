@@ -15,6 +15,7 @@ from app.services.offer_builder import OfferBuilder
 from app.services.bureau_mock import BureauMock
 from app.services.fraud_scorer import FraudScorer
 from app.services.reason_narrator import ReasonNarrator
+from app.services.transcriber import WhisperTranscriber
 from app.services.model_registry import get_registry
 
 
@@ -66,6 +67,13 @@ def get_narrator() -> ReasonNarrator:
     return narrator
 
 
+@lru_cache(maxsize=1)
+def get_transcriber() -> WhisperTranscriber:
+    transcriber = WhisperTranscriber()
+    transcriber.load()
+    return transcriber
+
+
 DbDep = Annotated[Session, Depends(get_db)]
 RiskScorerDep = Annotated[RiskScorer, Depends(get_risk_scorer)]
 PolicyDep = Annotated[PolicyEngine, Depends(get_policy_engine)]
@@ -74,3 +82,4 @@ OfferBuilderDep = Annotated[OfferBuilder, Depends(get_offer_builder)]
 BureauDep = Annotated[BureauMock, Depends(get_bureau_mock)]
 FraudScorerDep = Annotated[FraudScorer, Depends(get_fraud_scorer)]
 NarratorDep = Annotated[ReasonNarrator, Depends(get_narrator)]
+TranscriberDep = Annotated[WhisperTranscriber, Depends(get_transcriber)]

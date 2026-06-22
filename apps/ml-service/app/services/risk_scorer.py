@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 VERSION = "1.2.0"
 
-MODEL_PATH = Path(__file__).parent.parent / "models" / "risk_mlp" / "keras_model.h5"
-
-# Scaler params stored alongside the model (populated at train time)
-SCALER_PATH = Path(__file__).parent.parent / "models" / "risk_mlp" / "scaler_params.npz"
+# Default location of the production risk model. A specific archived version can
+# be loaded by passing model_dir=.../models/risk_mlp/archive/<version>.
+DEFAULT_MODEL_DIR = Path(__file__).parent.parent / "models" / "risk_mlp"
 
 
 class RiskScorer:
-    def __init__(self) -> None:
+    def __init__(self, model_dir: Path | str | None = None) -> None:
+        self._dir = Path(model_dir) if model_dir else DEFAULT_MODEL_DIR
         self._model = None
         self._scaler_mean: np.ndarray | None = None
         self._scaler_scale: np.ndarray | None = None
@@ -31,16 +31,18 @@ class RiskScorer:
         try:
             import tensorflow as tf  # type: ignore
 
-            keras_path = MODEL_PATH.parent / "keras_model.keras"
-            load_path = keras_path if keras_path.exists() else MODEL_PATH if MODEL_PATH.exists() else None
+            keras_path = self._dir / "keras_model.keras"
+            h5_path = self._dir / "keras_model.h5"
+            load_path = keras_path if keras_path.exists() else h5_path if h5_path.exists() else None
             if load_path:
                 self._model = tf.keras.models.load_model(str(load_path), compile=False)
                 logger.info("Risk model loaded from %s", load_path)
             else:
-                logger.warning("No keras_model.h5 found at %s — using fallback heuristic", MODEL_PATH)
+                logger.warning("No risk model found in %s — using fallback heuristic", self._dir)
 
-            if SCALER_PATH.exists():
-                data = np.load(str(SCALER_PATH))
+            scaler_path = self._dir / "scaler_params.npz"
+            if scaler_path.exists():
+                data = np.load(str(scaler_path))
                 self._scaler_mean = data["mean"]
                 self._scaler_scale = data["scale"]
         except Exception as exc:

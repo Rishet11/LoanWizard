@@ -145,6 +145,12 @@ class HealthResponse(BaseModel):
     models_loaded: dict[str, bool]
 
 
+class TranscribeResponse(BaseModel):
+    text: str
+    confidence: float
+    language: str
+
+
 # ---- replay ----
 
 class ReplayOverrides(BaseModel):
@@ -169,6 +175,11 @@ class ReplayResponse(BaseModel):
     original: dict[str, Any]
     replayed: dict[str, Any]
     diff: list[DiffEntry]
+    # Which risk model version the replay actually ran on, and whether that is the
+    # exact model recorded at decision time (False = archived weights unavailable,
+    # so the current production model was used as a fallback).
+    model_version_used: Optional[str] = None
+    exact_model_match: bool = True
 
 
 # ---- model registry ----

@@ -11,14 +11,16 @@ from app.models.fraud_mlp.features import build_fraud_features, FRAUD_FEATURE_NA
 
 logger = logging.getLogger(__name__)
 
-MODEL_PATH = Path(__file__).parent.parent / "models" / "fraud_mlp" / "fraud_model.keras"
-SCALER_PATH = Path(__file__).parent.parent / "models" / "fraud_mlp" / "fraud_scaler.npz"
-
 VERSION = "0.1.0"
+
+# Default location of the production fraud model. A specific archived version can
+# be loaded by passing model_dir=.../models/fraud_mlp/archive/<version>.
+DEFAULT_MODEL_DIR = Path(__file__).parent.parent / "models" / "fraud_mlp"
 
 
 class FraudScorer:
-    def __init__(self) -> None:
+    def __init__(self, model_dir: Path | str | None = None) -> None:
+        self._dir = Path(model_dir) if model_dir else DEFAULT_MODEL_DIR
         self._model = None
         self._mean: np.ndarray | None = None
         self._scale: np.ndarray | None = None
@@ -27,18 +29,20 @@ class FraudScorer:
         try:
             import tensorflow as tf  # type: ignore
 
-            if MODEL_PATH.exists():
-                self._model = tf.keras.models.load_model(str(MODEL_PATH), compile=False)
-                logger.info("Fraud model loaded from %s", MODEL_PATH)
+            model_path = self._dir / "fraud_model.keras"
+            scaler_path = self._dir / "fraud_scaler.npz"
+            if model_path.exists():
+                self._model = tf.keras.models.load_model(str(model_path), compile=False)
+                logger.info("Fraud model loaded from %s", model_path)
 
-            if SCALER_PATH.exists():
-                data = np.load(str(SCALER_PATH))
+            if scaler_path.exists():
+                data = np.load(str(scaler_path))
                 self._mean = data["mean"]
                 self._scale = data["scale"]
             elif self._model is not None:
                 logger.warning(
                     "Fraud model loaded but scaler missing at %s — scoring on raw features",
-                    SCALER_PATH,
+                    scaler_path,
                 )
         except Exception as exc:
             logger.warning("Fraud model failed to load (%s) — using heuristic", exc)

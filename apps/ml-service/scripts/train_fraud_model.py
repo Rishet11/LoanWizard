@@ -93,6 +93,14 @@ def run():
     print(f"Fraud model saved to {MODEL_PATH}")
     print(f"Fraud scaler saved to {SCALER_PATH}")
 
+    # Archive under the current version for faithful decision replay.
+    from app.services.fraud_scorer import VERSION as FRAUD_VERSION
+    archive_dir = MODEL_DIR / "archive" / FRAUD_VERSION
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    model.save(str(archive_dir / "fraud_model.keras"))
+    np.savez(str(archive_dir / "fraud_scaler.npz"), mean=mean, scale=scale)
+    print(f"Archived fraud model v{FRAUD_VERSION} to {archive_dir}")
+
 
 if __name__ == "__main__":
     run()

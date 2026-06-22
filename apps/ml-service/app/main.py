@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes import health, mock, debug, offer
-from app.routes import decisions, drift, fairness, models_route
+from app.routes import decisions, drift, fairness, models_route, transcribe
 
 logging.basicConfig(level=logging.INFO)
 
@@ -28,6 +28,7 @@ app.include_router(decisions.router)
 app.include_router(drift.router)
 app.include_router(fairness.router)
 app.include_router(models_route.router)
+app.include_router(transcribe.router)
 
 
 @app.on_event("startup")
