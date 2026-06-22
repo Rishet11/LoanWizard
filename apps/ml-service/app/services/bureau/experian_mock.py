@@ -4,6 +4,7 @@ from __future__ import annotations
 import random
 
 from app.schemas import BureauResult, FormData
+from app.services.bureau.base import stable_seed
 
 
 class ExperianMock:
@@ -12,7 +13,7 @@ class ExperianMock:
 
     def lookup(self, form: FormData) -> BureauResult:
         # Offset seed so scores differ from CIBIL for the same name
-        seed = (hash(form.name or "unknown") + 42) % 1000
+        seed = stable_seed(form.name) + 42
         rng = random.Random(seed)
         score = rng.randint(600, 900)
         loans = rng.randint(0, 4)

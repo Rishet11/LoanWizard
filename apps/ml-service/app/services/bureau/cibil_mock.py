@@ -4,6 +4,7 @@ from __future__ import annotations
 import random
 
 from app.schemas import BureauResult, FormData
+from app.services.bureau.base import stable_seed
 
 
 class CIBILMock:
@@ -11,7 +12,7 @@ class CIBILMock:
     priority = 1
 
     def lookup(self, form: FormData) -> BureauResult:
-        seed = hash(form.name or "unknown") % 1000
+        seed = stable_seed(form.name)
         rng = random.Random(seed)
         score = rng.randint(650, 850)
         loans = rng.randint(0, 3)

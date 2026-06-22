@@ -1,9 +1,12 @@
 """Deterministic policy rules. No ML. If hard-fail → offer rejected regardless of risk."""
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 
 from app.schemas import FormData, CVSignalsSummary, PolicyResult
+
+logger = logging.getLogger(__name__)
 
 
 SOFT_FLAG_RATE_ADJUSTMENTS: dict[str, float] = {
@@ -29,6 +32,9 @@ class PolicyEngine:
 
         declared_age = form.declared_age  # Optional[int]
         avg_age = cv.avg_age_estimate    # Optional[float]
+
+        if declared_age is None and avg_age is None:
+            logger.info("No age signal (declared or estimated) — skipping age eligibility checks")
 
         # Fail only when a known age signal is below 21; no signal → pass
         age_below = (declared_age is not None and declared_age < 21) or \

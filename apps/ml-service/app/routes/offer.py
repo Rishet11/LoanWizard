@@ -91,7 +91,7 @@ def create_offer(
         logger.warning("Event emit failed for session %s: %s", req.session_id, exc)
 
     decision_id = _audit(db, req, policy_result, risk_output, persona_output, fraud_output, offer, model_versions)
-    _save_snapshot(db, decision_id, req, offer)
+    _save_snapshot(db, decision_id, req, offer, policy_result.passed)
 
     return offer
 
@@ -129,7 +129,7 @@ def _audit(db: Session, req: OfferRequest, policy, risk, persona, fraud, offer: 
         return -1
 
 
-def _save_snapshot(db: Session, decision_id: int, req: OfferRequest, offer: Offer) -> None:
+def _save_snapshot(db: Session, decision_id: int, req: OfferRequest, offer: Offer, policy_passed: bool) -> None:
     if decision_id < 0:
         return
     try:
@@ -142,7 +142,7 @@ def _save_snapshot(db: Session, decision_id: int, req: OfferRequest, offer: Offe
                 "offer": offer.model_dump(),
                 "risk_band": offer.risk_band,
                 "eligible": offer.eligible,
-                "policy_passed": offer.eligible or bool(offer.rejection_reason),
+                "policy_passed": policy_passed,
             },
             model_versions_at_decision=offer.model_versions.model_dump() if offer.model_versions else {},
         )

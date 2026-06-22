@@ -57,6 +57,27 @@ class RiskScorer:
             return (vec - self._scaler_mean) / (self._scaler_scale + 1e-9)
         return vec
 
+    def _compute_importance(self, raw_vec: np.ndarray) -> dict[str, float]:
+        """Permutation importance from the trained model: how far the risk score
+        moves when each feature is reset to its training mean (0 in scaled space).
+        Falls back to the magnitude heuristic when the model isn't loaded."""
+        if self._model is None:
+            return get_feature_importance(raw_vec)
+        try:
+            norm = self._normalize(raw_vec).astype(np.float32)
+            n = norm.shape[0]
+            # Row 0 is the baseline; row i+1 zeroes feature i (its scaled mean).
+            batch = np.repeat(norm.reshape(1, -1), n + 1, axis=0)
+            for i in range(n):
+                batch[i + 1, i] = 0.0
+            preds = self._model.predict(batch, verbose=0).reshape(-1)
+            deltas = np.abs(preds[1:] - preds[0])
+            total = float(deltas.sum()) + 1e-9
+            return {name: float(deltas[i] / total) for i, name in enumerate(FEATURE_NAMES)}
+        except Exception as exc:
+            logger.warning("Permutation importance failed (%s) — using heuristic", exc)
+            return get_feature_importance(raw_vec)
+
     def _heuristic_score(self, form: FormData, cv: CVSignalsSummary, bureau: dict) -> float:
         """Deterministic fallback when model not available."""
         income = form.monthly_income or 1.0
@@ -81,7 +102,7 @@ class RiskScorer:
         geo_tier: int = 2,
     ) -> RiskScoreOutput:
         raw_vec = build_feature_vector(form, cv, bureau, geo_tier)
-        importance = get_feature_importance(raw_vec)
+        importance = self._compute_importance(raw_vec)
 
         if self._model is not None:
             try:

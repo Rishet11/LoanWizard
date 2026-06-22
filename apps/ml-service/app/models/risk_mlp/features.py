@@ -72,7 +72,9 @@ def build_feature_vector(
 
 
 def get_feature_importance(raw_vec: np.ndarray) -> dict[str, float]:
-    """Heuristic importance: abs-normalized feature values as proxy."""
+    """Magnitude-based importance proxy, used only as a fallback when the trained
+    model isn't loaded. The primary path is model permutation importance in
+    ``RiskScorer._compute_importance``."""
     total = np.abs(raw_vec).sum() + 1e-9
     importances = np.abs(raw_vec) / total
     return {name: float(importances[i]) for i, name in enumerate(FEATURE_NAMES)}
