@@ -1,4 +1,4 @@
-# LoanWizard - CodeQuest 2026 Prototype One-Pager
+# LoanWizard - Prototype One-Pager
 
 ## What It Is
 

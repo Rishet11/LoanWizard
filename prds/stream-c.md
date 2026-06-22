@@ -1,21 +1,21 @@
-# Stream C v4 — Platform UI
+# Stream C: Platform UI
 
-**Owner:** 1 Claude instance
+**Owner:** one independent build stream
 **Path:** `apps/web/`
 **Duration:** ~24-28 hrs
 **Prereq:** Contract bump landed (see `prds/README.md`). Streams A and B can be mocked via the existing `@loan-wizard/contracts` mocks until they integrate.
 
 **Do not touch:**
 - `packages/contracts/` (READ-ONLY)
-- `packages/perception/` — consume through `usePerception`
-- `apps/ml-service/` — consume through HTTP
+- `packages/perception/` (consume through `usePerception`)
+- `apps/ml-service/` (consume through HTTP)
 - Root `package.json`, `turbo.json`, `tsconfig.base.json`
 
 ---
 
 ## Your Job
 
-The web app today is a functional prototype: landing → permission gate → call UI → processing → offer. To sell the v4 story, it needs to look and feel like a platform that an NBFC would actually buy: **tenant-themeable, multi-lingual, accessible, with an Agent Co-pilot for review, an Admin dashboard, and a consent/audit experience that passes compliance review**.
+The web app today is a functional prototype: landing → permission gate → call UI → processing → offer. To turn it into a platform that an NBFC would actually buy, it needs to look and feel like one: **tenant-themeable, multi-lingual, accessible, with an Agent Co-pilot for review, an Admin dashboard, and a consent/audit experience that passes compliance review**.
 
 Do not expand scope beyond this PRD. No backend changes beyond the new API routes listed below.
 
@@ -23,18 +23,18 @@ Do not expand scope beyond this PRD. No backend changes beyond the new API route
 
 ## Deliverables
 
-1. **Design system refresh** — proper Tailwind design tokens, semantic color names, consistent spacing, typography scale, dark mode support.
-2. **Tenant theming** — CSS-variables-driven, swappable by route segment (`/t/[tenant]/...`) or header; ships with 2 themes (NBFC Alpha navy, NBFC Beta emerald).
-3. **Landing page v2** — modern copy, localized, clearer trust signals, visible language switcher.
-4. **Session flow polish** — smooth transitions, a persistent progress indicator (1/5 to 5/5), new document-capture overlay driven by Stream A's event, yaw-challenge UI.
-5. **Agent Co-pilot panel** (`/session/[id]/copilot`) — real-time view of an in-progress session for a human agent: live transcript, extracted form, CV signals + confidence, fraud score ticking, buttons to flag/interject.
-6. **Offer screen v2** — rich offer card with LLM-narrated reason, highlighted risk factors, accept/decline, mock e-sign modal, download offer PDF.
-7. **Admin dashboard** (`/admin`) — session list with filters, session detail with full timeline, decision replay UI, audit export, drift + fairness widgets.
-8. **Consent manager** (`/session/[id]/consent`) — shows every consent captured with verbal text + hash + timestamp, includes a "Right to be forgotten" request flow.
-9. **i18n** — English + Hindi with `next-intl` or equivalent, language state persisted, all user-facing strings extracted.
-10. **Real-time updates** — SSE stream (`/api/session/[id]/stream`) so the Agent Co-pilot and Admin session detail update live without polling.
-11. **Responsive + a11y** — mobile flow works end-to-end; Lighthouse a11y score ≥ 95 on landing and offer screens.
-12. **Demo seed script** — populates a handful of historical sessions for the Admin dashboard to have content on first load.
+1. **Design system refresh**: proper Tailwind design tokens, semantic color names, consistent spacing, typography scale, dark mode support.
+2. **Tenant theming**: CSS-variables-driven, swappable by route segment (`/t/[tenant]/...`) or header; ships with 2 themes (NBFC Alpha navy, NBFC Beta emerald).
+3. **Landing page v2**: modern copy, localized, clearer trust signals, visible language switcher.
+4. **Session flow polish**: smooth transitions, a persistent progress indicator (1/5 to 5/5), new document-capture overlay driven by Stream A's event, yaw-challenge UI.
+5. **Agent Co-pilot panel** (`/session/[id]/copilot`): real-time view of an in-progress session for a human agent: live transcript, extracted form, CV signals + confidence, fraud score ticking, buttons to flag/interject.
+6. **Offer screen v2**: rich offer card with LLM-narrated reason, highlighted risk factors, accept/decline, mock e-sign modal, download offer PDF.
+7. **Admin dashboard** (`/admin`): session list with filters, session detail with full timeline, decision replay UI, audit export, drift + fairness widgets.
+8. **Consent manager** (`/session/[id]/consent`): shows every consent captured with verbal text + hash + timestamp, includes a "Right to be forgotten" request flow.
+9. **i18n**: English + Hindi with `next-intl` or equivalent, language state persisted, all user-facing strings extracted.
+10. **Real-time updates**: SSE stream (`/api/session/[id]/stream`) so the Agent Co-pilot and Admin session detail update live without polling.
+11. **Responsive + a11y**: mobile flow works end-to-end; Lighthouse a11y score ≥ 95 on landing and offer screens.
+12. **Demo seed script**: populates a handful of historical sessions for the Admin dashboard to have content on first load.
 
 ---
 
@@ -68,14 +68,14 @@ Existing:
 - `POST /api/session/[id]/end`
 
 New:
-- `GET  /api/session/[id]/stream` — SSE emitting every persisted event for this session; used by Co-pilot and Admin session detail.
-- `GET  /api/admin/sessions?status=&tenant=&from=&to=` — paginated list.
-- `GET  /api/admin/sessions/[id]` — session detail + decision record.
-- `POST /api/admin/sessions/[id]/replay` — proxies to ML service `POST /decisions/{id}/replay`.
-- `GET  /api/admin/drift/[feature]` — proxies to ML service.
-- `GET  /api/admin/fairness` — proxies to ML service.
-- `POST /api/consent/[sessionId]/forget` — marks session for deletion (soft delete + scheduler hook).
-- `POST /api/session/[id]/accept` — records customer acceptance + mock e-sign.
+- `GET  /api/session/[id]/stream`: SSE emitting every persisted event for this session; used by Co-pilot and Admin session detail.
+- `GET  /api/admin/sessions?status=&tenant=&from=&to=`: paginated list.
+- `GET  /api/admin/sessions/[id]`: session detail + decision record.
+- `POST /api/admin/sessions/[id]/replay`: proxies to ML service `POST /decisions/{id}/replay`.
+- `GET  /api/admin/drift/[feature]`: proxies to ML service.
+- `GET  /api/admin/fairness`: proxies to ML service.
+- `POST /api/consent/[sessionId]/forget`: marks session for deletion (soft delete + scheduler hook).
+- `POST /api/session/[id]/accept`: records customer acceptance + mock e-sign.
 
 **Auth:** gate `/admin/*` and `/session/[id]/copilot` behind a simple cookie-based guard with a shared-secret admin password for the demo. Document the var (`ADMIN_PASSWORD`) in `.env.local.example`. This is demo-grade, not production.
 
@@ -108,7 +108,7 @@ New:
 ### 3. Landing v2
 
 Keep the existing trust copy but:
-- Tighter hero ("Your loan offer in under 2 minutes — video, voice, no paperwork").
+- Tighter hero ("Your loan offer in under 2 minutes: video, voice, no paperwork").
 - Language switcher top-right (EN | हिन्दी).
 - Replace the feature rows with 4 tight cards.
 - Replace the consent box with a compact callout + link to `/legal/privacy`.
@@ -147,8 +147,8 @@ Layout (desktop 3-column, stacks on mobile):
 Data source: SSE at `/api/session/[id]/stream`.
 
 Buttons:
-- **Flag**: writes a `flag` event to the session (extends Event API with a flag event type — server-side only, no contract bump).
-- **Interject**: posts a text the customer-facing TTS should speak. (Stretch — leave a button stub if time-constrained.)
+- **Flag**: writes a `flag` event to the session (extends Event API with a flag event type, server-side only, no contract bump).
+- **Interject**: posts a text the customer-facing TTS should speak. (Stretch: leave a button stub if time-constrained.)
 - **Notes**: freeform textarea, saved to `session.agent_notes`.
 
 ### 6. Offer screen v2
@@ -171,10 +171,10 @@ Buttons:
 - Pagination, keyboard-navigable.
 
 `/admin/sessions/[id]`:
-- **Tab 1: Timeline** — unified chronological view of transcripts, form extractions, CV signals, documents, consents, decisions. Filterable by event type.
-- **Tab 2: Decision** — full decision record: risk_band, risk_score, fraud_score, persona, policy pass/fail, reason narrative, model versions. "Replay with overrides" button opens a form that lets the operator edit a couple of feature values and see the diff.
-- **Tab 3: Evidence** — consent records with hashes, video blob ref (mock download link), device fingerprint snapshot.
-- **Tab 4: Audit Export** — "Download Audit Pack" button that bundles decision JSON + events + consent hashes into a ZIP via `jszip`.
+- **Tab 1: Timeline**: unified chronological view of transcripts, form extractions, CV signals, documents, consents, decisions. Filterable by event type.
+- **Tab 2: Decision**: full decision record: risk_band, risk_score, fraud_score, persona, policy pass/fail, reason narrative, model versions. "Replay with overrides" button opens a form that lets the operator edit a couple of feature values and see the diff.
+- **Tab 3: Evidence**: consent records with hashes, video blob ref (mock download link), device fingerprint snapshot.
+- **Tab 4: Audit Export**: "Download Audit Pack" button that bundles decision JSON + events + consent hashes into a ZIP via `jszip`.
 
 `/admin/drift`:
 - Dropdown: feature selector.
@@ -193,7 +193,7 @@ Buttons:
   - List of captured consents (type, timestamp, excerpt of verbal text, hash).
   - "Download my data" button (client-side JSON bundle).
   - "Request deletion" button (POST `/api/consent/[sessionId]/forget`).
-- Deletion: soft-delete — flip `deletedAt` on Session + cascade to Transcript/CvSignal/etc. Add a Prisma migration for the column.
+- Deletion: soft-delete, flip `deletedAt` on Session + cascade to Transcript/CvSignal/etc. Add a Prisma migration for the column.
 
 ### 9. i18n
 
@@ -352,16 +352,16 @@ No new root-level deps.
 ## Cut order if time slips
 
 1. Drop `/admin/drift` + `/admin/fairness` pages (keep APIs live for later).
-2. Drop PDF download — replace with client-side "Print this page" button.
+2. Drop PDF download, replace with client-side "Print this page" button.
 3. Drop tenant theming to a single theme with a token system still in place (easy to add themes later).
-4. Drop Hindi translations — keep i18n scaffolding, EN only, with a visible "हिन्दी (soon)" disabled toggle.
+4. Drop Hindi translations, keep i18n scaffolding, EN only, with a visible "हिन्दी (soon)" disabled toggle.
 5. Drop Co-pilot's "Interject" action (keep Flag + Notes only).
-6. Drop e-sign OTP modal — replace with a styled button and immediate accept.
+6. Drop e-sign OTP modal, replace with a styled button and immediate accept.
 
 **Never cut:**
 - Design system pass (touches everything; half-done is worse than full).
 - SSE stream (Co-pilot relies on it; Admin detail relies on it).
-- Decision replay UI (v4 centerpiece).
+- Decision replay UI (centerpiece feature).
 - Consent manager + right-to-forget (compliance centerpiece).
 
 ---
@@ -383,6 +383,6 @@ Document:
 3. Tenant theming contract: how to add a 3rd theme.
 4. i18n keys structure (so Stream A's new strings from doc-capture overlay get translated correctly).
 5. Admin credentials for demo (`ADMIN_PASSWORD` env var).
-6. Demo flow script — exact clicks for the 2-minute pitch.
+6. Demo flow script: exact clicks for the 2-minute pitch.
 
-Commit tag: `stream-c-v4-complete`
+Commit tag: `stream-c-complete`

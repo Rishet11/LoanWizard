@@ -3,6 +3,32 @@
 This repo is prepared for a two-Space Hugging Face deployment with Neon
 Postgres as the durable database.
 
+## Live deployment
+
+This project has a live, already-deployed ML Space running the real ML
+service. This is separate from the generic runbook below, which describes how
+to deploy a new copy of the project from scratch.
+
+The ML Space is deployed at
+[`https://huggingface.co/spaces/Rishet11/loanwizard-ml`](https://huggingface.co/spaces/Rishet11/loanwizard-ml).
+Its health check is available at
+`https://rishet11-loanwizard-ml.hf.space/health`.
+
+A reviewer can check the following endpoints on this live Space:
+
+- `/health`: basic liveness check for the Space.
+- `/docs`: interactive FastAPI documentation for the service's API surface.
+- `/offer`: the real Keras decision pipeline that produces loan offers.
+- `/fairness/report`: fairness metrics for the underlying model.
+- `/drift/*`: drift monitoring endpoints for tracked input features.
+
+---
+
+## Deploy-your-own-copy runbook
+
+The rest of this document is a generic runbook for deploying a new copy of
+this project with its own Neon database and Hugging Face Spaces.
+
 ## 1. Neon
 
 Create one Postgres project and copy the pooled connection string with SSL:

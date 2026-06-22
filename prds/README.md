@@ -1,20 +1,20 @@
-# Loan Wizard — v4 Refinement Sprint
+# Loan Wizard, Build Briefs
 
-Three parallel PRDs that move the MVP toward the **v4 target architecture** (see `docs/architecture-v4.pdf`) without blowing up the existing contracts. Each PRD is a self-contained brief for one Claude instance.
+This folder holds the original written briefs that each of the three independent build streams (perception, ML service, web app) was developed against. They are kept here as reference documentation of how the build was planned, not as a sign of unfinished or ongoing work. The briefs describe the path toward the target architecture (see `docs/architecture-target.pdf`) without blowing up the existing contracts.
 
-| PRD | Stream | Owner path | Focus |
+| Brief | Stream | Owner path | Focus |
 |---|---|---|---|
-| [`stream-a-v4.md`](./stream-a-v4.md) | **A — Perception** | `packages/perception/` | Document OCR, passive liveness v2, multi-lingual STT, device fingerprint, consent evidence |
-| [`stream-b-v4.md`](./stream-b-v4.md) | **B — ML Service** | `apps/ml-service/` | Fraud model, multi-bureau adapter, LLM reason narration, decision replay, event emission |
-| [`stream-c-v4.md`](./stream-c-v4.md) | **C — Web** | `apps/web/` | UI overhaul, Agent Co-pilot, Admin dashboard, offer/e-sign flow, i18n, tenant theming |
+| [`stream-a.md`](./stream-a.md) | **A (Perception)** | `packages/perception/` | Document OCR, passive liveness v2, multi-lingual STT, device fingerprint, consent evidence |
+| [`stream-b.md`](./stream-b.md) | **B (ML Service)** | `apps/ml-service/` | Fraud model, multi-bureau adapter, LLM reason narration, decision replay, event emission |
+| [`stream-c.md`](./stream-c.md) | **C (Web)** | `apps/web/` | UI overhaul, Agent Co-pilot, Admin dashboard, offer/e-sign flow, i18n, tenant theming |
 
 ---
 
 ## Contract bump (one-time coordination)
 
-The v4 work adds new event types and one new API field. This MUST be landed before Streams A, B, C start — all three depend on it.
+This work adds new event types and one new API field. This MUST be landed before Streams A, B, C start: all three depend on it.
 
-**Owner:** whichever instance finishes first, or a dedicated coordinator run. Should be a ≤ 1 hr change.
+**Owner:** whichever stream finishes first, or a dedicated coordinator run. Should be a <= 1 hr change.
 
 ### `packages/contracts/src/types.ts` additions
 
@@ -92,11 +92,11 @@ Extend `packages/contracts/src/mocks.ts` with `MOCK_DOCUMENT_CAPTURED`, `MOCK_DE
 
 ---
 
-## Ground rules (unchanged from CLAUDE.md)
+## Ground rules (unchanged from the project's build contract)
 
 - No touching another stream's directory.
 - All cross-stream communication goes through the contract types.
-- If you need a new type, STOP — do the contract bump above in a single PR first.
+- If you need a new type, STOP and do the contract bump above in a single PR first.
 - `turbo.json`, root `package.json`, `tsconfig.base.json` are off-limits.
 
 ---
@@ -111,14 +111,14 @@ T+20h   3-way integration: real perception events → ML decision → UI render
 T+24h   Hardening, demo scripts, docs
 ```
 
-## Demo script (what v4 looks like in the pitch)
+## Demo script (what the finished build looks like in the pitch)
 
-1. **Tenant theming**: open the app as "NBFC Alpha" — navy theme; switch to "NBFC Beta" — emerald theme.
+1. **Tenant theming**: open the app as "NBFC Alpha" (navy theme), switch to "NBFC Beta" (emerald theme).
 2. **Language switch**: toggle to Hindi; STT and TTS follow.
 3. **Video interview**: camera up, passive liveness challenge (look left/right), customer speaks, Aadhaar + PAN scan inline.
 4. **Agent Co-pilot**: side panel shows live transcript, form extractions, CV confidence, fraud score ticking.
 5. **Decision**: offer card with LLM-narrated reason codes ("Approved: stable salaried income, low LTV. Rate +0.75% for thin file.").
-6. **Admin**: jump to `/admin`, open the session that just ran, see the full timeline with fraud signals + consent evidence, click "Replay Decision" to re-run on frozen features.
-7. **Compliance**: click "Download Audit Pack" — gets a ZIP of video blob refs + consent hashes + decision features + model version.
+6. **Admin**: jump to `/admin`, open the session that just ran, see the full timeline with fraud signals and consent evidence, click "Replay Decision" to re-run on frozen features.
+7. **Compliance**: click "Download Audit Pack" to get a ZIP of video blob refs, consent hashes, decision features, and model version.
 
-That's the v4 story in one 2-minute demo.
+That's the full story in one 2-minute demo.

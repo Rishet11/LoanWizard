@@ -1,23 +1,23 @@
-# Stream B v4 — Decision Platform
+# Stream B: Decision Platform
 
-**Owner:** 1 Claude instance
+**Owner:** one independent build stream
 **Path:** `apps/ml-service/`
 **Duration:** ~22-26 hrs
 **Prereq:** Contract bump landed (see `prds/README.md`)
 
 **Do not touch:**
 - `packages/contracts/` (READ-ONLY, but you mirror the new types in Pydantic)
-- `packages/perception/` — not your problem
-- `apps/web/` — not your problem
+- `packages/perception/` (not your problem)
+- `apps/web/` (not your problem)
 - Root `package.json`, `turbo.json`
 
 ---
 
 ## Your Job
 
-Turn the current FastAPI service (policy + risk MLP + rules-based persona + offer builder) into a proper **decision platform** that is honest-to-goodness v4-flavored: second-opinion fraud model, multi-bureau merge, LLM-narrated explainability, decision replay, event emission onto a lightweight spine, and drift/fairness scaffolding.
+Turn the current FastAPI service (policy + risk MLP + rules-based persona + offer builder) into a proper **decision platform**: second-opinion fraud model, multi-bureau merge, LLM-narrated explainability, decision replay, event emission onto a lightweight spine, and drift/fairness scaffolding.
 
-Everything stays inside one FastAPI process for now. No Kafka. We use **Redis Streams** as a stand-in event bus — 1-line change to Kafka later.
+Everything stays inside one FastAPI process for now. No Kafka. We use **Redis Streams** as a stand-in event bus, a 1-line change to Kafka later.
 
 The rule: the public `POST /offer` endpoint stays backward compatible. New fields appear on the response (already approved via contract bump). Streams A and C do not need to change to keep working.
 
@@ -25,16 +25,16 @@ The rule: the public `POST /offer` endpoint stays backward compatible. New field
 
 ## Deliverables
 
-1. **Fraud micro-model** — second TF Keras head trained on device/velocity signals, returns `fraud_score ∈ [0,1]`.
-2. **Multi-bureau adapter pattern** — abstract `BureauAdapter` interface, ≥ 2 mock implementations (CIBIL, Experian), configurable merge strategy.
-3. **LLM-narrated reason codes** — human-readable `reason_narrative` string on every Offer. Works without external API (use local template LLM or Gemma; fall back to deterministic template if both unavailable).
-4. **Decision replay endpoint** — `POST /decisions/{id}/replay` re-runs the pipeline on the frozen feature snapshot; returns what-if diff.
-5. **Model registry** — `GET /models` lists loaded models + versions + load timestamps.
-6. **Event emission** — every decision publishes to Redis Streams with the frozen snapshot.
-7. **Drift detection scaffolding** — per-request feature hash + rolling population distribution endpoint.
-8. **Fairness audit harness** — pytest fixture that runs the pipeline across a synthetic cohort and asserts bounded disparate impact.
-9. **Multi-tenant support** — `tenant_id` threaded through request → decision record → event.
-10. **Tests** — additive, no regressions on existing policy + offer math suites.
+1. **Fraud micro-model**: second TF Keras head trained on device/velocity signals, returns `fraud_score ∈ [0,1]`.
+2. **Multi-bureau adapter pattern**: abstract `BureauAdapter` interface, ≥ 2 mock implementations (CIBIL, Experian), configurable merge strategy.
+3. **LLM-narrated reason codes**: human-readable `reason_narrative` string on every Offer. Works without external API (use local template LLM or Gemma; fall back to deterministic template if both unavailable).
+4. **Decision replay endpoint**: `POST /decisions/{id}/replay` re-runs the pipeline on the frozen feature snapshot; returns what-if diff.
+5. **Model registry**: `GET /models` lists loaded models + versions + load timestamps.
+6. **Event emission**: every decision publishes to Redis Streams with the frozen snapshot.
+7. **Drift detection scaffolding**: per-request feature hash + rolling population distribution endpoint.
+8. **Fairness audit harness**: pytest fixture that runs the pipeline across a synthetic cohort and asserts bounded disparate impact.
+9. **Multi-tenant support**: `tenant_id` threaded through request to decision record to event.
+10. **Tests**: additive, no regressions on existing policy + offer math suites.
 
 ---
 
@@ -98,7 +98,7 @@ All additive. Existing callers keep working.
 ```
 
 ### `GET /drift/{feature}`
-Returns rolling stats for the named feature across the last N decisions — for ops dashboards.
+Returns rolling stats for the named feature across the last N decisions, for ops dashboards.
 ```json
 { "feature": "monthly_income", "n": 837, "mean": 48230, "std": 21004, "p50": 45000, "p99": 130000 }
 ```
@@ -122,15 +122,15 @@ Runs the synthetic cohort and returns approval-rate buckets:
 Train a **second Keras MLP** on synthetic fraud labels.
 
 **Features** (12):
-- `canvas_hash_cohort_size` — count of prior sessions with same canvas_hash (velocity signal)
-- `session_age_sec` — time between `session_start` and `offer_request`
-- `transcript_length` — total chars
-- `form_mutations` — count of `form_field_extracted` events (more edits = more suspicious)
-- `min_liveness`, `avg_liveness`, `face_present_ratio`, `texture_score_avg` — from CV summary
-- `ua_entropy` — Shannon entropy of the UA string (very low or very high = bot)
-- `income_to_loan_ratio` — sanity
-- `declared_age_minus_cv_age` — mismatch
-- `geo_tier` — 1/2/3 if geo provided else -1
+- `canvas_hash_cohort_size`: count of prior sessions with same canvas_hash (velocity signal)
+- `session_age_sec`: time between `session_start` and `offer_request`
+- `transcript_length`: total chars
+- `form_mutations`: count of `form_field_extracted` events (more edits = more suspicious)
+- `min_liveness`, `avg_liveness`, `face_present_ratio`, `texture_score_avg`: from CV summary
+- `ua_entropy`: Shannon entropy of the UA string (very low or very high = bot)
+- `income_to_loan_ratio`: sanity
+- `declared_age_minus_cv_age`: mismatch
+- `geo_tier`: 1/2/3 if geo provided else -1
 
 **Target:** synthesized from 4 rules with noise:
 - fraud if `canvas_hash_cohort_size > 3` (multi-account signal)
@@ -196,7 +196,7 @@ Two paths:
 - Must mention at least one concrete number from the decision (rate, amount, or score).
 - A post-processor enforces these; any violation triggers template fallback.
 
-Wire into `offer_builder.build_offer()` — set `offer.reason_narrative` before return.
+Wire into `offer_builder.build_offer()`, set `offer.reason_narrative` before return.
 
 ### 4. Decision replay
 
@@ -204,7 +204,7 @@ Wire into `offer_builder.build_offer()` — set `offer.reason_narrative` before 
 - `POST /decisions/{id}/replay`:
   1. Load snapshot.
   2. Apply `overrides` (deep-merge into snapshot inputs).
-  3. Re-run the full pipeline with **frozen model versions** (record which versions were used at original decision time; re-load them from disk if they've changed — ship a `models_archive/` directory).
+  3. Re-run the full pipeline with **frozen model versions** (record which versions were used at original decision time; re-load them from disk if they've changed, ship a `models_archive/` directory).
   4. Compute JSON diff between original offer and replayed offer.
   5. Return `{ original, replayed, diff }`.
 - If model versions have rolled forward since original decision, return both original's and current's outputs to let the operator compare.
@@ -215,7 +215,7 @@ Wire into `offer_builder.build_offer()` — set `offer.reason_narrative` before 
 - If unset, events go to stdout only (dev mode).
 - Stream names: `decisions`, `offers`, `frauds`.
 - Payload: the full request + full response + model versions + timestamp.
-- Use `redis-py` async client; non-blocking — a failure to emit must never fail the HTTP response.
+- Use `redis-py` async client; non-blocking: a failure to emit must never fail the HTTP response.
 
 ### 6. Drift detection
 
@@ -230,7 +230,7 @@ Wire into `offer_builder.build_offer()` — set `offer.reason_narrative` before 
 `tests/test_fairness.py`:
 - Build a synthetic cohort of 200 customers stratified by employment × age bucket × income bucket.
 - Run `POST /offer` against each.
-- Assert: four-fifths rule — min_group_approval / max_group_approval ≥ 0.8 across employment types and age buckets.
+- Assert: four-fifths rule, min_group_approval / max_group_approval ≥ 0.8 across employment types and age buckets.
 - Exposed at runtime via `GET /fairness/report` using the same fixture.
 
 ### 8. Multi-tenant
@@ -327,12 +327,12 @@ dependencies = [
 
 ## Cut order if time slips
 
-1. Drop LLM narration entirely — keep template-based narration. The `reason_narrative` field stays populated and reads natural.
-2. Drop drift/fairness endpoints — keep the collectors running but no public routes.
-3. Drop Redis event emission — stdout only; Stream C polls DB instead.
+1. Drop LLM narration entirely, keep template-based narration. The `reason_narrative` field stays populated and reads natural.
+2. Drop drift/fairness endpoints, keep the collectors running but no public routes.
+3. Drop Redis event emission, stdout only; Stream C polls DB instead.
 4. Drop multi-bureau to CIBIL-only but keep the adapter interface (so it's trivial to add Experian later).
 
-**Never cut:** fraud_score, reason_narrative (even template), decision snapshots, `/decisions/{id}/replay`. These are the v4 demo centerpieces.
+**Never cut:** fraud_score, reason_narrative (even template), decision snapshots, `/decisions/{id}/replay`. These are the demo centerpieces.
 
 ---
 
@@ -341,9 +341,9 @@ dependencies = [
 Document:
 1. Full response shape of `POST /offer` with all new fields.
 2. `POST /decisions/{id}/replay` contract with example curl.
-3. `GET /models`, `/drift/*`, `/fairness/report` — what Stream C can render.
+3. `GET /models`, `/drift/*`, `/fairness/report`: what Stream C can render.
 4. Redis stream names + payload schema (for future consumer services).
 5. All new env vars: `BUREAU_ADAPTERS`, `BUREAU_MERGE_STRATEGY`, `ENABLE_GEMMA`, `ENABLE_GEMINI_FALLBACK`, `GEMINI_API_KEY`, `EVENT_STREAM_URL`, `REASON_NARRATOR_MODE`.
 6. Known limits: fraud model trained on synthetic labels; narration is illustrative; drift stats are in-memory in single-replica mode.
 
-Commit tag: `stream-b-v4-complete`
+Commit tag: `stream-b-complete`
