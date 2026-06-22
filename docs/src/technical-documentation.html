@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LoanWizard — Technical Documentation</title>
+<title>LoanWizard: Technical Documentation</title>
 <style>
   @page { size: A4 portrait; margin: 18mm 16mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -73,13 +73,12 @@
 <!-- ============ COVER ============ -->
 <div class="cover">
   <div class="top">
-    <span class="ev">CodeQuest 2026 · Round 2 · Prototype</span>
     <span class="ver">Technical Documentation · v1.0</span>
   </div>
   <div class="mid">
     <h1>LoanWizard</h1>
     <div class="tagline">Apply for a loan by talking to your camera. The model watches, listens,
-      verifies, and prices the offer in minutes, not days — no branch, no paperwork, no waiting room.</div>
+      verifies, and prices the offer in minutes, not days: no branch, no paperwork, no waiting room.</div>
     <div class="rule"></div>
     <div class="doctype">Technical Documentation</div>
     <p class="small" style="margin-top:6px;max-width:150mm">An AI video loan-origination platform for
@@ -96,7 +95,7 @@
     </div>
   </div>
   <div class="foot">
-    <span>LoanWizard — Technical Documentation</span>
+    <span>LoanWizard: Technical Documentation</span>
     <span>Prepared for prototype evaluation</span>
   </div>
 </div>
@@ -118,13 +117,13 @@ and audited later.</p>
 
 <h3>Who it serves</h3>
 <p>Two users, not one. The <b>borrower</b> applies by talking to their camera. The <b>lender or
-compliance team</b> needs every decision to be auditable, explainable, and fair — so the same flow
+compliance team</b> needs every decision to be auditable, explainable, and fair. The same flow
 that prices the loan also produces the evidence a risk team would ask for.</p>
 
 <h3>What is genuinely new here</h3>
 <ul>
   <li>The interview drives the form by voice; you speak, and name, employment, income, amount and purpose fill in as you talk.</li>
-  <li>The decision pipeline is real and explainable end to end — not a scripted screen with a number on it.</li>
+  <li>The decision pipeline is real and explainable end to end, not a scripted screen with a number on it.</li>
   <li>The whole session is wrapped in an auditable, replayable record, down to the exact model version that produced the offer.</li>
   <li>The landing page is an Operator Console that shows the machine working, rather than a scrolling marketing page that describes it.</li>
 </ul>
@@ -142,7 +141,7 @@ could be developed independently and integrated through typed events and a singl
   <tr><td><b>packages/perception</b></td><td>A</td><td>Browser perception: camera, mic, speech-to-text, TF.js liveness, document OCR, age estimate, device fingerprint. Emits typed <code>PerceptionEvent</code>s.</td></tr>
   <tr><td><b>apps/web</b></td><td>C</td><td>Next.js 14 App Router: session state machine, Operator Console UI, Prisma audit writes, admin dashboards, internationalisation, server-sent events.</td></tr>
   <tr><td><b>apps/ml-service</b></td><td>B</td><td>FastAPI: risk MLP, fraud MLP, persona classifier, policy engine, bureau merge, reason narrator, drift tracker, fairness report, decision replay.</td></tr>
-  <tr><td><b>packages/contracts</b></td><td>shared</td><td>Frozen TypeScript types, Zod schemas and mock data shared across every stream — the integration boundary.</td></tr>
+  <tr><td><b>packages/contracts</b></td><td>shared</td><td>Frozen TypeScript types, Zod schemas and mock data shared across every stream: this is the integration boundary.</td></tr>
 </table>
 
 <p>The request path is deliberately <b>server-authoritative</b>. The browser never submits the offer
@@ -151,7 +150,7 @@ server-side from that persisted data. That single decision is what makes the aud
 and form tampering a non-issue.</p>
 
 <div class="note"><b>See also.</b> <code>docs/architecture-current.pdf</code> is the as-built diagram for
-this prototype. <code>docs/architecture-v4.pdf</code> shows the target production platform (multi-tenant,
+this prototype. <code>docs/architecture-target.pdf</code> shows the target production platform (multi-tenant,
 real disbursement, full compliance) and how the same contract boundary carries through to it.</div>
 
 <h3>Why two ORMs over one database</h3>
@@ -169,12 +168,12 @@ is faked at runtime; the models are pre-trained and committed under <code>apps/m
 
 <div class="pipeline">
   <div class="step"><b>Bureau merge.</b> Combines a mock CIBIL and Experian pull into a single credit profile. Mocked behind an adapter (no commercial credentials); deterministic per applicant.</div>
-  <div class="step"><b>Policy engine.</b> Hard eligibility rules first — age, income floor, loan cap, liveness, face presence. A failed rule short-circuits to a clear rejection reason.</div>
+  <div class="step"><b>Policy engine.</b> Hard eligibility rules first: age, income floor, loan cap, liveness, face presence. A failed rule short-circuits to a clear rejection reason.</div>
   <div class="step"><b>Risk MLP.</b> A Keras model (<code>v1.2.0</code>) scores the applicant from form fields, the CV summary, bureau data and geo tier, producing a risk band.</div>
   <div class="step"><b>Fraud MLP.</b> A second Keras model (<code>v0.1.0</code>) scores fraud from CV signals, device fingerprint and geo.</div>
   <div class="step"><b>Persona classifier.</b> A rules model (<code>v1.0.0</code>) labels the applicant, for example <code>salaried_prime</code>, to shape the offer and the narrative.</div>
   <div class="step"><b>Offer builder.</b> Maps risk band plus policy result to amount, rate, tenure and EMI. Soft flags (thin file, high loan-to-income) add small, explicit rate adjustments.</div>
-  <div class="step"><b>Reason narrator.</b> Produces weighted reason codes and a plain-language explanation — a deterministic template by default, with optional Gemini/Gemma narration.</div>
+  <div class="step"><b>Reason narrator.</b> Produces weighted reason codes and a plain-language explanation: a deterministic template by default, with optional Gemini/Gemma narration.</div>
   <div class="step"><b>Audit + snapshot.</b> Writes the decision row, a frozen input snapshot for replay, the model versions used, and a drift sample for monitoring.</div>
 </div>
 
@@ -195,8 +194,8 @@ regenerated from scratch.</p>
 <h3>Reason codes that reflect the model, not the inputs</h3>
 <p>An early version ranked reason codes by raw feature magnitude, which meant income always dominated
 regardless of what the model had learned. That is a common and misleading shortcut. The current
-implementation (<code>app/services/risk_scorer.py</code>) computes real <b>permutation importance</b>:
-it takes a baseline prediction, then perturbs each of the twelve features to its scaled mean one at a
+implementation (<code>app/services/risk_scorer.py</code>) computes real <b>permutation importance</b>.
+It takes a baseline prediction, then perturbs each of the twelve features to its scaled mean one at a
 time, re-predicts, and measures the absolute change in output. The whole thing runs as a single
 batched predict, so it is cheap enough to do on every request. The reason codes therefore reflect what
 the model actually responds to. The old magnitude heuristic remains only as a fallback when the model
@@ -242,11 +241,11 @@ typed events.</p>
   </div>
   <div>
     <h3>Speech-to-text, with a real fallback</h3>
-    <p>The browser Web Speech API is the primary path — reliable on Chrome, weaker on Safari, disabled by
-    default on Firefox. When confidence is low, the layer automatically falls back to a server-side Whisper
-    endpoint (<code>POST /transcribe</code>) wired through <code>NEXT_PUBLIC_TRANSCRIBE_URL</code>. The
-    Whisper model is an opt-in deploy toggle to keep the default image light; the fallback wiring is in
-    place regardless.</p>
+    <p>The browser Web Speech API is the primary path. It is reliable on Chrome, weaker on Safari, and
+    disabled by default on Firefox. When confidence is low, the layer automatically falls back to a
+    server-side Whisper endpoint (<code>POST /transcribe</code>) wired through
+    <code>NEXT_PUBLIC_TRANSCRIBE_URL</code>. The Whisper model is an opt-in deploy toggle to keep the
+    default image light; the fallback wiring is in place regardless.</p>
     <h3>Age estimate</h3>
     <p>A real in-browser model via <code>@vladmandic/face-api</code> with weights vendored into the repo,
     degrading gracefully to a placeholder if the weights cannot load so a session never breaks.</p>
@@ -276,8 +275,8 @@ default on Firefox. Use Chrome for the live-camera demo; the Whisper fallback co
 <h3>Fraud and tamper resistance</h3>
 <p>Liveness and the fraud MLP defend against someone holding up a photo or a recording. Form tampering
 and replay are addressed structurally: the form is filled from perception events tied to a server
-session, and the offer is computed server-side from persisted data — not from anything the client
-submits — and written with model versions and a frozen snapshot.</p>
+session, and the offer is computed server-side from persisted data, not from anything the client
+submits, and written with model versions and a frozen snapshot.</p>
 </section>
 
 <!-- ============ 7. REAL VS MOCKED ============ -->
@@ -290,11 +289,11 @@ honesty sits.</p>
 model-derived permutation importance, Keras fraud MLP, rules persona classifier, policy engine, bureau
 merge, reason narrator); the audit writes and frozen decision snapshots; decision replay on the exact
 archived model version; the session state machine; the web UI and the admin console (sessions, fairness,
-drift, replay). Browser perception — TF.js liveness, on-device OCR, the face-api age model, speech, and
-device fingerprint — is real and runs locally with <code>NEXT_PUBLIC_USE_MOCK_PERCEPTION=false</code>.</div>
+drift, replay). Browser perception (TF.js liveness, on-device OCR, the face-api age model, speech, and
+device fingerprint) is real and runs locally with <code>NEXT_PUBLIC_USE_MOCK_PERCEPTION=false</code>.</div>
 
 <div class="note mock"><b>Mocked or optional by design.</b> The bureau pull (CIBIL/Experian behind an
-adapter — no live commercial credentials; intentional prototype scope). The LLM narration (deterministic
+adapter, no live commercial credentials; intentional prototype scope). The LLM narration (deterministic
 template by default; Gemini/Gemma optional). The Whisper STT model (opt-in deploy toggle; the
 browser-to-server fallback is wired regardless). The public judge link runs scripted perception and a
 reliable mock offer so the end-to-end demo never depends on a webcam or a cold ML Space.</div>
@@ -308,7 +307,7 @@ interface is in place (<code>app/services/bureau/</code>), so a real pull is a d
 <section>
 <h2><span class="n">08</span>Running the prototype</h2>
 <p>Requirements: Node 18+, pnpm 8, Python 3.11, and either Docker or a local PostgreSQL 16+. The web
-build needs no database — all routes are server-rendered on demand — so a clean checkout type-checks and
+build needs no database. All routes are server-rendered on demand, so a clean checkout type-checks and
 builds without any secrets.</p>
 
 <pre><span class="c"># 1. Install JS dependencies</span>
@@ -326,7 +325,7 @@ pnpm --filter @loan-wizard/web dev</pre>
 
 <p>If Docker is unavailable, the ML service runs natively (Python virtualenv +
 <code>uvicorn</code>); the README documents that path. To drive the flow without a camera, set
-<code>NEXT_PUBLIC_USE_MOCK_PERCEPTION=true</code>, which replays canned perception events — this is how
+<code>NEXT_PUBLIC_USE_MOCK_PERCEPTION=true</code>, which replays canned perception events. This is how
 the hosted public demo runs.</p>
 
 <div class="note real"><b>Verified in a clean environment.</b> Web: <code>tsc --noEmit</code> clean and
@@ -336,10 +335,10 @@ eligible offer with risk band, fraud score, three reason codes and a narrative, 
 stamped.</div>
 
 <h3>Deployment</h3>
-<p>The recommended hosted shape is two Docker Spaces on Hugging Face — the repository root for the web
-app (port 3000) and <code>apps/ml-service</code> for the ML service (port 8000) — with Neon Postgres for
+<p>The recommended hosted shape is two Docker Spaces on Hugging Face: the repository root for the web
+app (port 3000) and <code>apps/ml-service</code> for the ML service (port 8000), with Neon Postgres for
 the shared audit trail. <code>ADMIN_PASSWORD</code> is required on the web Space and
-<code>DATABASE_URL</code> on both. The full runbook is in <code>docs/hf-deployment.md</code>.</p>
+<code>DATABASE_URL</code> on both. The full runbook is in <code>docs/DEPLOYMENT.md</code>.</p>
 </section>
 
 <!-- ============ 9. TECH STACK ============ -->
@@ -359,20 +358,20 @@ the shared audit trail. <code>ADMIN_PASSWORD</code> is required on the web Space
 <p>The ML service is stateless per request and scales horizontally behind a load balancer. Perception
 runs in the browser, so the heavy CV work is on the client and does not consume server capacity.
 Postgres holds the shared state; nothing in the request path keeps session state in memory. The
-<code>architecture-v4.pdf</code> diagram shows how the same contract boundary extends to a multi-tenant
+<code>architecture-target.pdf</code> diagram shows how the same contract boundary extends to a multi-tenant
 platform with an event spine, a feature store and model serving.</p>
 
 <h2><span class="n">10</span>Known limitations and roadmap</h2>
 <p>As of this prototype, and stated plainly:</p>
 <ul>
-  <li><b>Bureau pull is mocked</b> behind an adapter — intentional scope; live access needs commercial credentials, and a real adapter is a drop-in.</li>
+  <li><b>Bureau pull is mocked</b> behind an adapter. This is intentional scope: live access needs commercial credentials, and a real adapter is a drop-in.</li>
   <li><b>Server-side Whisper is off by default</b> to keep the image light; the browser-to-server STT fallback is wired and the model is a one-line deploy toggle.</li>
   <li><b>Age estimation</b> runs a real in-browser model but degrades to a placeholder if the weights fail to load, so a session never breaks.</li>
   <li><b>The public judge link</b> runs scripted perception and a reliable mock offer; the real camera and ML path runs locally.</li>
 </ul>
-<p><b>Next:</b> live bureau integrations behind the existing adapter; deepfake-resistant liveness using
-the optional texture model; a lender console for human-in-the-loop review on borderline decisions; and
-the v4 platform build-out (disbursement, servicing, co-lending) along the roadmap in the target
+<p><b>Next:</b> live bureau integrations behind the existing adapter, deepfake-resistant liveness using
+the optional texture model, a lender console for human-in-the-loop review on borderline decisions, and
+the target platform build-out (disbursement, servicing, co-lending) along the roadmap in the target
 architecture.</p>
 
 <p class="small" style="margin-top:18px;border-top:1px solid #e2e8f0;padding-top:8px">LoanWizard ·

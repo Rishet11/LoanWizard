@@ -1,4 +1,4 @@
-# ML Service — Integration Handoff (v4)
+# ML Service: Integration Handoff (v4)
 
 ## 1. Endpoint URL and Port
 
@@ -9,15 +9,15 @@ Base URL: http://localhost:8000   (local dev)
 
 | Endpoint | Method | Description |
 |---|---|---|
-| `/offer` | POST | Primary: Stream C calls this — now returns fraud_score + reason_narrative |
+| `/offer` | POST | Primary: Stream C calls this, now returns fraud_score + reason_narrative |
 | `/decisions/{id}/replay` | POST | What-if replay on frozen snapshot |
 | `/models` | GET | Model registry listing |
 | `/drift/{feature}` | GET | Rolling stats for a feature |
 | `/drift/{feature}/baseline` | GET | Training-set baseline for a feature |
 | `/fairness/report` | GET | Approval rates + disparate impact ratio |
 | `/mock/offer` | GET | Static mock for parallel dev |
-| `/debug/risk-score` | POST | Dev only — raw risk score |
-| `/debug/persona` | POST | Dev only — raw persona |
+| `/debug/risk-score` | POST | Dev only, raw risk score |
+| `/debug/persona` | POST | Dev only, raw persona |
 | `/health` | GET | Readiness probe |
 
 ## 2. Full `POST /offer` Response Shape (v4)
@@ -74,7 +74,7 @@ Response:
 }
 ```
 
-The `id` in the URL is the `decisions.id` primary key returned in the DB — Stream C can read it from the `decisions` table or store it alongside the session.
+The `id` in the URL is the `decisions.id` primary key returned in the DB; Stream C can read it from the `decisions` table or store it alongside the session.
 
 ## 4. Ops Endpoints for Stream C Dashboard
 
@@ -111,7 +111,7 @@ Set `EVENT_STREAM_URL=redis://localhost:6379` to enable.
 |---|---|---|
 | `decisions` | Every `POST /offer` | `session_id`, `tenant_id`, `request`, `offer`, `model_versions` |
 | `frauds` | When `fraud_score > 0.7` | `session_id`, `fraud_score`, `signals` |
-| `offers` | (reserved for future) | — |
+| `offers` | (reserved for future) | (none) |
 
 If `EVENT_STREAM_URL` is unset, events log to stdout only.
 
@@ -123,18 +123,18 @@ If `EVENT_STREAM_URL` is unset, events log to stdout only.
 | `BUREAU_MERGE_STRATEGY` | `weighted` | `max`, `avg`, or `weighted` |
 | `ENABLE_GEMMA` | `false` | Load Gemma 2B for LLM narration (+15s startup) |
 | `ENABLE_GEMINI_FALLBACK` | `false` | Use Gemini API as LLM narrator |
-| `GEMINI_API_KEY` | — | Required if ENABLE_GEMINI_FALLBACK=true |
+| `GEMINI_API_KEY` | (none) | Required if ENABLE_GEMINI_FALLBACK=true |
 | `REASON_NARRATOR_MODE` | `template` | `template` (deterministic) or `llm` |
-| `EVENT_STREAM_URL` | — | Redis URL; stdout-only if unset |
+| `EVENT_STREAM_URL` | (none) | Redis URL; stdout-only if unset |
 | `DATABASE_URL` | `postgresql://loan:loan@db:5432/loan` | Postgres connection |
 | `PERSONA_STRATEGY` | `rules_first` | `rules_first` or `rules_only` |
 | `USE_MOCK_BUREAU` | `true` | Only option for demo |
 
 ## 7. Known Limits
 
-- **Both ML models trained on synthetic data** — risk and fraud scores are directionally correct, not calibrated.
-- **Reason narrative** uses the Jinja template by default — it mentions CIBIL score and rate. For production, enable Gemini for more natural language.
-- **Drift stats are in-memory** — lost on restart in single-replica mode. Back by Redis for persistence.
-- **Fairness cohort is synthetic** — all incomes above ₹15k pass policy, making disparate impact ratio = 1.0 for the demo.
-- **Decision replay** uses the current in-memory model, not a versioned archive — if models retrain, replayed scores may differ slightly.
-- **`decisions.id`** is the replay lookup key — Stream C should persist it alongside session_id for replay UX.
+- **Both ML models trained on synthetic data**: risk and fraud scores are directionally correct, not calibrated.
+- **Reason narrative** uses the Jinja template by default, and it mentions CIBIL score and rate. For production, enable Gemini for more natural language.
+- **Drift stats are in-memory**: lost on restart in single-replica mode. Back by Redis for persistence.
+- **Fairness cohort is synthetic**: all incomes above ₹15k pass policy, making disparate impact ratio = 1.0 for the demo.
+- **Decision replay** uses the current in-memory model, not a versioned archive; if models retrain, replayed scores may differ slightly.
+- **`decisions.id`** is the replay lookup key; Stream C should persist it alongside session_id for replay UX.

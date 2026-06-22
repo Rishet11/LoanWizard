@@ -4,7 +4,7 @@
 - Stream C calls `usePerception({ sessionId, onEvent })` from a `'use client'` component.
 - `videoRef` is attached to a `<video>` element that is mounted before `start()` is called.
 - Stream C dispatches every `PerceptionEvent` to its own state store; Perception does not maintain UI state.
-- Stream C's session API provides the `sessionId` — Perception never creates one.
+- Stream C's session API provides the `sessionId`; Perception never creates one.
 
 ## Unreliable Events (flag for integration tests)
 - `cv_signal`: may not fire for the first 1-2 seconds while TF.js models load. Integration test should not assert on the first signal.
@@ -19,7 +19,7 @@
 - Demo serves these at `/face-api`; the Next.js app serves them at `/models/face-api`.
 
 ## Known Browser Issues
-- **Safari**: `SpeechRecognition` is `webkitSpeechRecognition`, `continuous = true` is unreliable. Safari fires `onend` after each utterance — the STT wrapper restarts automatically but there may be a 300ms gap.
+- **Safari**: `SpeechRecognition` is `webkitSpeechRecognition`, `continuous = true` is unreliable. Safari fires `onend` after each utterance; the STT wrapper restarts automatically but there may be a 300ms gap.
 - **Firefox**: Web Speech API is disabled by default behind `media.webspeech.recognition.enable` flag. Whisper fallback is the primary path on Firefox.
 - **Chrome/Edge**: Primary target. All features tested.
 

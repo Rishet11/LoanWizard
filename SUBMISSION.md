@@ -1,4 +1,4 @@
-# LoanWizard — Submission Readiness (Bharat Academix CodeQuest 2026, Round 2)
+# LoanWizard: Submission Readiness (Bharat Academix CodeQuest 2026, Round 2)
 
 > AI video loan origination: the customer applies by talking to their camera; the
 > system verifies liveness, fills the form by voice, scores risk and fraud with real
@@ -15,13 +15,13 @@ Submit via **both** the Unstop dashboard (ZIP) and the Google Form.
 |---|---|---|
 | Functional Prototype / MVP | ✅ Ready | Full flow perception → ML → offer → admin; runs locally and on HF Spaces |
 | Source Code | ✅ Ready | This monorepo (web, ml-service, perception, contracts); MIT `LICENSE` |
-| Technical Documentation | ✅ Ready | `docs/technical-documentation.pdf` (+ `README.md`, `QNA.md`, `docs/hf-deployment.md`, `prds/`, this file) |
+| Technical Documentation | ✅ Ready | `docs/technical-documentation.pdf` (+ `README.md`, `QNA.md`, `docs/DEPLOYMENT.md`, `prds/`, this file) |
 | Presentation Deck (PDF) | ✅ Ready | `docs/presentation-deck.pdf` (12 slides, in the repo) |
-| Architecture Diagram | ✅ Ready | `docs/architecture-current.pdf` (as built) + `docs/architecture-v4.pdf` (target platform) |
-| Demo Video | ⬜ To record (you) | 3–5 min screen capture of the live flow + admin (see §5 for a suggested run order) |
+| Architecture Diagram | ✅ Ready | `docs/architecture-current.pdf` (as built) + `docs/architecture-target.pdf` (target platform) |
+| Demo Video | ⬜ To record (you) | 3 to 5 min screen capture of the live flow + admin (see §5 for a suggested run order) |
 
 The deck, technical documentation and both architecture diagrams are committed as PDFs under
-`docs/` (sources in `docs/src/`, regenerated with `docs/render.sh`).
+`docs/` (sources in `docs/src/`, regenerated with `docs/generate-pdfs.sh`).
 
 **You still need to:** record the demo video; deploy the two HF Spaces + Neon DB; download/assemble
 the ZIP; submit on Unstop + Google Form.
@@ -36,28 +36,33 @@ the ZIP; submit on Unstop + Google Form.
 | Web | `next build` **without** `DATABASE_URL` | ✅ succeeds; all routes server-rendered on demand (build needs no DB) |
 | Perception (`packages/perception`) | `vitest run` | ✅ 33/33 passing |
 | ML (`apps/ml-service`) | `pytest` | ✅ 95/95 passing |
-| ML | `POST /offer` against committed Keras models | ✅ 200 — eligible offer, risk band, fraud score, 3 reason codes + narrative, model versions stamped |
+| ML | `POST /offer` against committed Keras models | ✅ 200, eligible offer, risk band, fraud score, 3 reason codes + narrative, model versions stamped |
 | ML | `GET /health` | ✅ `models_loaded: {risk: true, persona: true}` |
 
 Toolchain used: Node 22, pnpm 8.15, Python 3.11, TensorFlow 2.16.1 (installed from
-prebuilt wheels — no build-time compilation).
+prebuilt wheels, no build-time compilation needed).
 
 ---
 
-## 3. Deployment (you run this; container here has no network to HF/Neon)
+## 3. Deployment
 
-Full runbook: **`docs/hf-deployment.md`**. Summary of the recommended two-Space + Neon setup:
+The ML service is already deployed and live at
+[`https://huggingface.co/spaces/Rishet11/loanwizard-ml`](https://huggingface.co/spaces/Rishet11/loanwizard-ml)
+(health check: `https://rishet11-loanwizard-ml.hf.space/health`). This container has no network
+route to HF or Neon, so the steps below are for deploying your own copy; see
+**`docs/DEPLOYMENT.md`** for the full runbook plus details on the live Space above. Summary of the
+recommended two-Space + Neon setup:
 
-1. **Neon Postgres** — create a project, copy the pooled SSL connection string, then:
+1. **Neon Postgres:** create a project, copy the pooled SSL connection string, then:
    ```bash
    DATABASE_URL='postgresql://...sslmode=require' pnpm --filter @loan-wizard/web db:push
    DATABASE_URL='postgresql://...sslmode=require' pnpm --filter @loan-wizard/web seed
    ```
-2. **ML Space** (Docker, port 8000) — deploy `apps/ml-service/`. Secrets:
+2. **ML Space** (Docker, port 8000): deploy `apps/ml-service/`. Secrets:
    `DATABASE_URL`, `USE_MOCK_BUREAU=true`, `PERSONA_STRATEGY=rules_first`,
    `ENABLE_GEMINI_FALLBACK=false`. Smoke: `/health`, `/docs`, `/fairness/report`,
    `/drift/monthly_income/baseline`.
-3. **Web Space** (Docker, port 3000) — deploy the repo root. Secrets:
+3. **Web Space** (Docker, port 3000): deploy the repo root. Secrets:
    `DATABASE_URL`, `ML_SERVICE_URL=https://<ml-space-host>`, `NEXT_PUBLIC_ML_MODE=mock`,
    `NEXT_PUBLIC_USE_MOCK_PERCEPTION=true`, `ADMIN_PASSWORD=<strong-secret>`.
 
@@ -77,21 +82,21 @@ device fingerprint) is real and runs locally with `NEXT_PUBLIC_USE_MOCK_PERCEPTI
 Speech-to-text falls back from the browser Web Speech API to a server-side Whisper
 endpoint (`POST /transcribe`) when confidence is low.
 
-**Mocked / optional by design:** the bureau pull (CIBIL/Experian behind an adapter — no
-live credentials; intentional prototype scope), the LLM narration (deterministic template
-by default; Gemini/Gemma optional), the Whisper STT model (opt-in deploy toggle — the
-browser→server fallback is wired regardless), and the public judge link runs scripted
+**Mocked / optional by design:** the bureau pull (CIBIL/Experian behind an adapter, no
+live credentials, intentional prototype scope), the LLM narration (deterministic template
+by default, Gemini/Gemma optional), the Whisper STT model (opt-in deploy toggle, the
+browser-to-server fallback is wired regardless), and the public judge link runs scripted
 perception + a reliable mock offer so the end-to-end demo never depends on a webcam or a
 cold ML Space.
 
 **Browser caveat:** Web Speech API confidence is weaker on Safari and disabled by default
-on Firefox — use Chrome for the live camera demo (the Whisper fallback covers the rest).
+on Firefox, so use Chrome for the live camera demo (the Whisper fallback covers the rest).
 
 ---
 
 ## 5. Suggested demo-video run order (3–5 min)
 
-1. Landing / Operator Console — one-line pitch, live gauges.
+1. Landing / Operator Console: one-line pitch, live gauges.
 2. Start session → scripted interview fills the form by "voice" (no camera needed on the
    hosted link), liveness/fraud signals tick in the co-pilot panel.
 3. Processing → **Offer card**: rate, EMI, weighted reason codes, plain-language narrative.

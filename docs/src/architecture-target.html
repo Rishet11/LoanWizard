@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Loan Wizard — v4 Platform Architecture</title>
+<title>Loan Wizard: Target Platform Architecture</title>
 <style>
   @page { size: A4 landscape; margin: 10mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { font-family: 'Inter', 'Segoe UI', -apple-system, sans-serif; color: #0f172a; background: #fff; }
-  body { padding: 14px 18px; width: 297mm; min-height: 210mm; }
+  body { padding: 14px 18px; width: 297mm; }
 
   .header {
     display: flex; justify-content: space-between; align-items: baseline;
@@ -75,10 +75,10 @@
 
 <div class="header">
   <div>
-    <h1>Loan Wizard — AI Video Loan Origination Platform</h1>
-    <div class="sub">v4 target architecture · multi-tenant white-label, real disbursement, full compliance</div>
+    <h1>Loan Wizard: AI Video Loan Origination Platform</h1>
+    <div class="sub">Target architecture · multi-tenant white-label, real disbursement, full compliance</div>
   </div>
-  <span class="tag">v4 PLATFORM</span>
+  <span class="tag">TARGET ARCHITECTURE</span>
 </div>
 
 <div class="stack">
@@ -197,18 +197,18 @@
 </div>
 
 <div class="roadmap">
-  <span class="step current">MVP (today)</span>
+  <span class="step current">Today: working prototype</span>
   <span class="arrow">▸</span>
-  <span class="step">v1: real bureau + S3 + auth</span>
+  <span class="step">Next: real bureau + cloud storage</span>
   <span class="arrow">▸</span>
-  <span class="step">v2: Kafka + TF Serving + vector DB</span>
+  <span class="step">Then: streaming + model serving</span>
   <span class="arrow">▸</span>
-  <span class="step">v3: Gemma + fraud ML + active learning</span>
+  <span class="step">Then: fraud ML + LLM narration</span>
   <span class="arrow">▸</span>
-  <span class="step">v4: multi-tenant · disbursement · co-lending</span>
+  <span class="step">Later: multi-tenant + disbursement</span>
 </div>
 
-<div class="caption">Contracts boundary (`@loan-wizard/contracts`) preserved from MVP through v4 — every new service consumes the same session/perception/decision shapes.</div>
+<div class="caption">Contracts boundary (`@loan-wizard/contracts`) preserved across every stage of this roadmap: every new service consumes the same session/perception/decision shapes.</div>
 
 </body>
 </html>

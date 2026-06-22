@@ -56,7 +56,7 @@ pnpm --filter @loan-wizard/perception typecheck
 
 `AgeEstimator` runs a real in-browser model via `@vladmandic/face-api`
 (tiny face detector + age/gender net). Weights are vendored under
-`models/face-api/` (MIT licensed, copied from the npm package — no external
+`models/face-api/` (MIT licensed, copied from the npm package, no external
 download), served at `/models/face-api` in the web app and `/face-api` in the
 demo. If the weights can't load it degrades gracefully to a `28 ± 3` mock.
 Re-sync weights with `node scripts/copy-face-api-models.mjs`.

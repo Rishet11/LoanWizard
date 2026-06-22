@@ -1,4 +1,4 @@
-# Stream C v4 — Integration Checklist
+# Stream C v4: Integration Checklist
 
 ## 1. Env Vars to Flip (mock → real)
 
@@ -50,11 +50,11 @@ Token names: `--brand`, `--brand-fg`, `--bg`, `--surface`, `--fg`, `--muted`, `-
 ## 5. i18n Keys
 
 All user-facing strings are in `src/messages/en.json` and `src/messages/hi.json`. Key prefix conventions:
-- `landing.*` — landing page
-- `perm.*` — permission gate
-- `session.*` — call UI
-- `offer.*` — offer screen
-- `accepted.*` — post-accept
+- `landing.*`: landing page
+- `perm.*`: permission gate
+- `session.*`: call UI
+- `offer.*`: offer screen
+- `accepted.*`: post-accept
 
 When Stream A adds new strings for doc-capture or challenge overlays, add keys under `call.*` prefix in both files.
 
@@ -64,26 +64,26 @@ Production requires `ADMIN_PASSWORD`. Development falls back to `admin123` only 
 
 ## 7. Perception Event Fields NOT Currently Used
 
-- `permission_granted.payload.geo` — geo is requested directly by browser
-- `transcript_turn.payload.confidence` — stored in DB, not displayed in Co-pilot
-- `cv_signal.payload.blink_count_window` — stored, not shown
-- `cv_signal.payload.head_pose_delta` — stored, not shown
-- `error` event — unhandled; Co-pilot will log to console only
+- `permission_granted.payload.geo`: geo is requested directly by browser
+- `transcript_turn.payload.confidence`: stored in DB, not displayed in Co-pilot
+- `cv_signal.payload.blink_count_window`: stored, not shown
+- `cv_signal.payload.head_pose_delta`: stored, not shown
+- `error` event: unhandled; Co-pilot will log to console only
 
 ## 8. ML Response Fields NOT Currently Displayed
 
-- `offer.persona` — not shown on offer card (used in admin detail)
-- `offer.risk_band` — shown as badge on offer card ✓
-- `offer.fraud_score` (v4 field) — shown in TrustMeter if present; defaults to 0.1 if absent
-- `offer.reason_narrative` (v4 field) — shown in italic quote on offer card if present
+- `offer.persona`: not shown on offer card (used in admin detail)
+- `offer.risk_band`: shown as badge on offer card ✓
+- `offer.fraud_score` (v4 field): shown in TrustMeter if present; defaults to 0.1 if absent
+- `offer.reason_narrative` (v4 field): shown in italic quote on offer card if present
 
 ## 9. Known Issues with Mock Data
 
-- Offer page reads from sessionStorage (set by processing page) or falls back to `GET /api/session/[id]/offer`. If server restarts between processing and offer pages, the GET fallback fires — works but adds latency.
+- Offer page reads from sessionStorage (set by processing page) or falls back to `GET /api/session/[id]/offer`. If server restarts between processing and offer pages, the GET fallback fires, which works but adds latency.
 - Admin dashboard KPI cards require a real DB connection; with `DATABASE_URL=postgresql://x` they return 0.
 - Co-pilot page has no auth gate (just a URL). For the demo, distribute the URL only to agents. Add a proper auth check before production.
-- SSE stream uses in-memory pub/sub — dies on server restart or multi-instance deploy. For production, use Redis pub/sub.
-- `recharts` v3 has a peer dep warning with React 18 — rendering works fine, suppress warning or pin to recharts@2.
+- SSE stream uses in-memory pub/sub, which dies on server restart or multi-instance deploy. For production, use Redis pub/sub.
+- `recharts` v3 has a peer dep warning with React 18, but rendering works fine: suppress warning or pin to recharts@2.
 
 ## 10. CORS
 

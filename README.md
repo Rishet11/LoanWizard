@@ -23,26 +23,27 @@ LoanWizard is an AI video loan origination platform. A customer starts a session
 
 ---
 
-## For judges and reviewers — start here
+## For judges and reviewers, start here
 
 A short path through the project:
 
-1. **The pitch** — [`docs/presentation-deck.pdf`](docs/presentation-deck.pdf) (12 slides).
-2. **The technical write-up** — [`docs/technical-documentation.pdf`](docs/technical-documentation.pdf).
-3. **The system** — [`docs/architecture-current.pdf`](docs/architecture-current.pdf) (as built) and [`docs/architecture-v4.pdf`](docs/architecture-v4.pdf) (target platform).
-4. **Run it** — four commands in [Quick start](#quick-start). The web app builds with no database and no secrets.
-5. **The hard questions** — [`QNA.md`](QNA.md) answers them candidly, including what is real and what is mocked.
+1. **The pitch:** [`docs/presentation-deck.pdf`](docs/presentation-deck.pdf) (12 slides).
+2. **The technical write-up:** [`docs/technical-documentation.pdf`](docs/technical-documentation.pdf).
+3. **The system:** [`docs/architecture-current.pdf`](docs/architecture-current.pdf) (as built) and [`docs/architecture-target.pdf`](docs/architecture-target.pdf) (target platform).
+4. **Run it:** four commands in [Quick start](#quick-start). The web app builds with no database and no secrets.
+5. **The hard questions:** [`QNA.md`](QNA.md) answers them candidly, including what is real and what is mocked.
+6. **The live ML service:** already deployed at [Hugging Face](https://huggingface.co/spaces/Rishet11/loanwizard-ml), health check at `https://rishet11-loanwizard-ml.hf.space/health`. See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 | Document | What it covers |
 |---|---|
 | [`docs/technical-documentation.pdf`](docs/technical-documentation.pdf) | Full write-up: architecture, ML, perception, compliance, how to run |
 | [`docs/presentation-deck.pdf`](docs/presentation-deck.pdf) | 12-slide pitch deck |
 | [`docs/architecture-current.pdf`](docs/architecture-current.pdf) | As-built architecture for this repository |
-| [`docs/architecture-v4.pdf`](docs/architecture-v4.pdf) | Target production platform |
-| [`QNA.md`](QNA.md) · [`SUBMISSION.md`](SUBMISSION.md) | Reviewer Q&A · deliverables and verified build matrix |
-| [`docs/hf-deployment.md`](docs/hf-deployment.md) | Hugging Face + Neon deployment runbook |
+| [`docs/architecture-target.pdf`](docs/architecture-target.pdf) | Target production platform |
+| [`QNA.md`](QNA.md) and [`SUBMISSION.md`](SUBMISSION.md) | Reviewer Q&A, deliverables and verified build matrix |
+| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | The live HF ML Space, plus a runbook for deploying your own copy |
 
-> The PDFs are generated from the HTML sources in [`docs/src/`](docs/src) via `docs/render.sh`, so they regenerate from source.
+> The PDFs are generated from the HTML sources in [`docs/src/`](docs/src) via `docs/generate-pdfs.sh`, so they regenerate from source.
 
 ---
 
@@ -105,7 +106,7 @@ locally with `NEXT_PUBLIC_USE_MOCK_PERCEPTION=false`.
                          │
                   PostgreSQL  (audit + frozen decision snapshots)
 
-  packages/contracts — shared TypeScript types, Zod schemas, mocks
+  packages/contracts: shared TypeScript types, Zod schemas, mocks
 ```
 
 ### Monorepo layout
@@ -197,7 +198,9 @@ ML service: `PERSONA_STRATEGY`, `USE_MOCK_BUREAU`, `ENABLE_GEMINI_FALLBACK`, `CO
 
 ## Hugging Face deployment
 
-Recommended hosted architecture:
+The ML service for this project is already deployed and live: [`https://huggingface.co/spaces/Rishet11/loanwizard-ml`](https://huggingface.co/spaces/Rishet11/loanwizard-ml), with a health check at `https://rishet11-loanwizard-ml.hf.space/health`. A reviewer can hit `/docs`, `/offer`, `/fairness/report` and `/drift/*` there directly. Full notes in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+
+Recommended hosted architecture for deploying your own copy:
 
 - **HF Web Space:** deploy this repository root as a Docker Space. The root
   `Dockerfile` builds `apps/web`, runs `prisma generate`, and serves Next.js on
@@ -278,10 +281,10 @@ We would rather be precise than oversell. As of this prototype:
   decision (`model_versions_at_decision`), falling back to the current model and
   flagging `exact_model_match=false` only if that version isn't archived.
 - **The bureau pull is mocked** behind an adapter (`app/services/bureau/`). This
-  is intentional prototype scope — live CIBIL/Experian access needs commercial
+  is intentional prototype scope: live CIBIL/Experian access needs commercial
   credentials, and a real adapter is a drop-in against the existing interface.
 - The public judge link runs scripted perception and a reliable mock offer for
-  reliability; the real camera + ML path runs locally — see "Live demo flow".
+  reliability; the real camera and ML path runs locally, see "Live demo flow" above.
 
 ---
 
@@ -297,7 +300,7 @@ We would rather be precise than oversell. As of this prototype:
 
 ## Team and build model
 
-Built as three parallel streams against a frozen shared contract package, so perception, ML and web could be developed independently and integrated through typed events and a single offer API. See `prds/` for the per-stream briefs and `docs/architecture-v4.pdf` for the target architecture.
+Built as three parallel streams against a frozen shared contract package, so perception, ML and web could be developed independently and integrated through typed events and a single offer API. See `prds/` for the original build briefs and `docs/architecture-target.pdf` for the target architecture.
 
 ## Roadmap
 

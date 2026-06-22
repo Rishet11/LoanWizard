@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LoanWizard — Prototype Architecture (as built)</title>
+<title>LoanWizard: Prototype Architecture (as built)</title>
 <style>
   @page { size: A4 landscape; margin: 9mm; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,7 +60,7 @@
 
 <div class="header">
   <div>
-    <h1>LoanWizard — Prototype Architecture <span style="font-weight:400;color:#64748b;font-size:13px">(as built)</span></h1>
+    <h1>LoanWizard: Prototype Architecture <span style="font-weight:400;color:#64748b;font-size:13px">(as built)</span></h1>
     <div class="sub">The system that runs in this repository today. Boxes map to real directories; dashed boxes are mocked or optional by design.</div>
   </div>
   <span class="tag">MVP · SHIPPED</span>
@@ -132,7 +132,7 @@
     </div>
     <div class="card">
       <h3>Build model</h3>
-      <p>Three parallel streams (A/B/C) against the frozen contract package — independent development, typed integration.</p>
+      <p>Three parallel streams (A/B/C) against the frozen contract package, each developed independently and integrated through typed contracts.</p>
     </div>
     <div class="card">
       <h3>Deploy target</h3>
@@ -148,10 +148,10 @@
 <div class="legend">
   <span class="key"><span class="sw"></span> Real &amp; running in this repo</span>
   <span class="key"><span class="sw mock"></span> Mocked / optional by design (adapter or deploy toggle in place)</span>
-  <span style="margin-left:auto;color:#94a3b8">See <b>docs/architecture-v4.pdf</b> for the target production platform.</span>
+  <span style="margin-left:auto;color:#94a3b8">See <b>docs/architecture-target.pdf</b> for the target production platform.</span>
 </div>
 
-<div class="caption">LoanWizard · AI video loan origination · prototype architecture. Request path is server-authoritative: the client never submits the offer inputs directly — the ML service recomputes from persisted session data.</div>
+<div class="caption">LoanWizard · AI video loan origination · prototype architecture. Request path is server-authoritative: the client never submits the offer inputs directly, the ML service recomputes from persisted session data.</div>
 
 </body>
 </html>

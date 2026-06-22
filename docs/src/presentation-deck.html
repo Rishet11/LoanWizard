@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LoanWizard — Presentation Deck</title>
+<title>LoanWizard: Presentation Deck</title>
 <style>
   @page { size: A4 landscape; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -88,7 +88,6 @@
 
 <!-- 1. COVER -->
 <div class="slide cover">
-  <div class="kicker">CodeQuest 2026 · Round 2 · Prototype</div>
   <div class="stitle">LoanWizard</div>
   <div class="rule"></div>
   <div class="tagline">Apply for a loan by talking to your camera. The model watches, listens,
@@ -121,11 +120,11 @@
   <div class="body">
     <div class="cols c4">
       <div class="card"><div class="ic">SPEAK</div><h3>The form fills itself</h3><p>Multilingual speech-to-text extracts name, employment, income, amount and purpose as you talk.</p></div>
-      <div class="card"><div class="ic">VERIFY</div><h3>The camera checks you live</h3><p>Passive liveness — blink, head-pose, texture — plus on-device Aadhaar and PAN OCR. No uploads.</p></div>
+      <div class="card"><div class="ic">VERIFY</div><h3>The camera checks you live</h3><p>Passive liveness (blink, head-pose, texture) plus on-device Aadhaar and PAN OCR. No uploads.</p></div>
       <div class="card"><div class="ic">PRICE</div><h3>Real-time decision</h3><p>A risk MLP, a fraud MLP, a persona model and a policy engine produce a rate, an EMI and reason codes.</p></div>
       <div class="card"><div class="ic">PROVE</div><h3>Explainable &amp; replayable</h3><p>Every offer ships reason codes and a narrative; the input snapshot is frozen so it can be re-run.</p></div>
     </div>
-    <div class="sub" style="margin-top:22px">One continuous experience — and compliance is first class, not an afterthought.</div>
+    <div class="sub" style="margin-top:22px">One continuous experience, and compliance is first class, not an afterthought.</div>
   </div>
   <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>03</span></div>
 </div>
@@ -136,7 +135,7 @@
   <div class="stitle">From link to offer, in one sitting.</div>
   <div class="body">
     <div class="biglist">
-      <div class="row"><div class="num">1</div><div class="t"><b>Operator Console</b><span>A single-screen lending terminal — live perception gauges, the video feed, one Initiate control.</span></div></div>
+      <div class="row"><div class="num">1</div><div class="t"><b>Operator Console</b><span>A single-screen lending terminal: live perception gauges, the video feed, one Initiate control.</span></div></div>
       <div class="row"><div class="num">2</div><div class="t"><b>Permission gate</b><span>Plain-language reasons before camera, mic and location are ever requested.</span></div></div>
       <div class="row"><div class="num">3</div><div class="t"><b>Video interview</b><span>The agent asks, the customer speaks, the form fills; liveness and fraud signals tick live in a co-pilot panel.</span></div></div>
       <div class="row"><div class="num">4</div><div class="t"><b>The offer</b><span>A card with rate, EMI, weighted reason codes and a plain-language narrated explanation.</span></div></div>
@@ -156,7 +155,7 @@
       <div class="card"><div class="ic">STREAM C · WEB</div><h3>Next.js 14</h3><p>Session state machine, Operator Console, Prisma audit writes, admin dashboards, i18n, SSE.</p></div>
       <div class="card"><div class="ic">STREAM B · SERVICE</div><h3>FastAPI</h3><p>Risk MLP, fraud MLP, persona, policy engine, bureau merge, reason narrator, drift, fairness, replay.</p></div>
     </div>
-    <div class="sub" style="margin-top:20px"><b>Server-authoritative:</b> the client never submits the offer inputs — the ML service recomputes from persisted session data. That is what makes the audit trail trustworthy. &nbsp; <span style="color:#94a3b8">Full diagrams: docs/architecture-current.pdf &amp; architecture-v4.pdf</span></div>
+    <div class="sub" style="margin-top:20px"><b>Server-authoritative:</b> the client never submits the offer inputs, the ML service recomputes from persisted session data. That is what makes the audit trail trustworthy. &nbsp; <span style="color:#94a3b8">Full diagrams: docs/architecture-current.pdf &amp; architecture-target.pdf</span></div>
   </div>
   <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>05</span></div>
 </div>
@@ -187,14 +186,14 @@
 <!-- 7. ML / EXPLAINABILITY -->
 <div class="slide">
   <div class="kicker">The moat · explainable AI</div>
-  <div class="stitle">Explanations derived from the model — not dressed up to look like it.</div>
+  <div class="stitle">Explanations derived from the model, not dressed up to look like it.</div>
   <div class="body">
     <div class="split">
       <div class="panel real">
         <h3>Permutation importance</h3>
         <ul>
           <li>Baseline prediction, then perturb each of 12 features to its scaled mean, re-predict, measure the change.</li>
-          <li>Runs as a single batched predict — cheap enough for every request.</li>
+          <li>Runs as a single batched predict, cheap enough for every request.</li>
           <li>Reason codes reflect what the model <b>actually responds to</b>, not raw feature size.</li>
         </ul>
       </div>
@@ -203,7 +202,7 @@
         <ul>
           <li>Each decision is stamped with its model versions.</li>
           <li>Weights are archived per version; replay loads the model <b>as it was</b>.</li>
-          <li>Reports <code style="font-size:11px">exact_model_match</code> — and flags it honestly on fallback.</li>
+          <li>Reports <code style="font-size:11px">exact_model_match</code> and flags it honestly on fallback.</li>
         </ul>
       </div>
     </div>
@@ -223,7 +222,7 @@
       <div class="card"><h3>Auditability</h3><p>Frozen snapshots, per-decision model versions, one-click replay.</p></div>
       <div class="card"><h3>Fair lending</h3><p>Cohort fairness report and feature-drift tracking in the admin console.</p></div>
       <div class="card"><h3>Borrower protection</h3><p>3-day cool-off on the accepted screen, downloadable Key Fact Statement.</p></div>
-      <div class="card"><h3>Tamper resistance</h3><p>Offer computed server-side from persisted data — the client can't forge inputs.</p></div>
+      <div class="card"><h3>Tamper resistance</h3><p>Offer computed server-side from persisted data, the client can't forge inputs.</p></div>
     </div>
   </div>
   <div class="foot"><span class="brand">Loan<span>Wizard</span></span><span>08</span></div>
@@ -248,10 +247,10 @@
       <div class="panel mock">
         <h3>Mocked / optional by design</h3>
         <ul>
-          <li>Bureau pull — adapter in place, no commercial credentials</li>
-          <li>LLM narration — template default, Gemini optional</li>
-          <li>Whisper STT model — opt-in deploy toggle (fallback wired)</li>
-          <li>Public judge link — scripted perception + reliable mock offer</li>
+          <li>Bureau pull: adapter in place, no commercial credentials</li>
+          <li>LLM narration: template default, Gemini optional</li>
+          <li>Whisper STT model: opt-in deploy toggle (fallback wired)</li>
+          <li>Public judge link: scripted perception and reliable mock offer</li>
         </ul>
       </div>
     </div>
@@ -288,11 +287,11 @@
   <div class="stitle">The contract boundary carries from MVP to platform.</div>
   <div class="body">
     <div class="road">
-      <div class="step now"><div class="ph">NOW</div><h4>MVP</h4><p>Real decision pipeline, perception, audit, replay, admin.</p></div>
-      <div class="step"><div class="ph">v1</div><h4>Real bureau + auth</h4><p>Live CIBIL/Experian behind the adapter; object store; OIDC.</p></div>
-      <div class="step"><div class="ph">v2</div><h4>Event spine + serving</h4><p>Kafka, TF Serving, feature store, vector DB.</p></div>
-      <div class="step"><div class="ph">v3</div><h4>LLM + fraud ML</h4><p>Gemma narration, graph fraud, active learning.</p></div>
-      <div class="step"><div class="ph">v4</div><h4>Platform</h4><p>Multi-tenant, disbursement, servicing, co-lending.</p></div>
+      <div class="step now"><div class="ph">Today: working prototype</div><h4>MVP</h4><p>Real decision pipeline, perception, audit, replay, admin.</p></div>
+      <div class="step"><div class="ph">Next: real bureau + cloud storage</div><h4>Real bureau + auth</h4><p>Live CIBIL/Experian behind the adapter; object store; OIDC.</p></div>
+      <div class="step"><div class="ph">Then: streaming + model serving</div><h4>Event spine + serving</h4><p>Kafka, TF Serving, feature store, vector DB.</p></div>
+      <div class="step"><div class="ph">Then: fraud ML + LLM narration</div><h4>LLM + fraud ML</h4><p>Gemma narration, graph fraud, active learning.</p></div>
+      <div class="step"><div class="ph">Later: multi-tenant + disbursement</div><h4>Platform</h4><p>Multi-tenant, disbursement, servicing, co-lending.</p></div>
     </div>
     <div class="sub" style="margin-top:26px">Near-term: deepfake-resistant liveness via the optional texture model, and a lender console for human-in-the-loop review on borderline decisions.</div>
   </div>
@@ -303,7 +302,7 @@
 <div class="slide cover" style="justify-content:center">
   <div class="kicker">In one line</div>
   <div class="quote" style="margin-top:18px;color:#fff">A customer talks to their camera and walks away with an
-    <span class="hl">explainable, auditable, replayable</span> loan offer — in minutes, not days.</div>
+    <span class="hl">explainable, auditable, replayable</span> loan offer, in minutes, not days.</div>
   <div class="rule"></div>
   <div class="meta">
     <b>Repository:</b> github.com/Rishet11/LoanWizard<br>
