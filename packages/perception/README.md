@@ -54,8 +54,12 @@ pnpm --filter @loan-wizard/perception typecheck
 
 ## Age Model
 
-Place converted UTKFace MobileNet TF.js files in `models/age-mobilenet-tfjs/`.
-Falls back to a mock estimator (`28 ± 3`) if not present — acceptable for hack demo.
+`AgeEstimator` runs a real in-browser model via `@vladmandic/face-api`
+(tiny face detector + age/gender net). Weights are vendored under
+`models/face-api/` (MIT licensed, copied from the npm package — no external
+download), served at `/models/face-api` in the web app and `/face-api` in the
+demo. If the weights can't load it degrades gracefully to a `28 ± 3` mock.
+Re-sync weights with `node scripts/copy-face-api-models.mjs`.
 
 ## Browser Compatibility
 

@@ -167,6 +167,7 @@ pnpm --filter @loan-wizard/perception dev   # http://localhost:5173
 | `ML_SERVICE_URL` | `http://localhost:8000` | ML service base URL |
 | `NEXT_PUBLIC_ML_MODE` | `mock` | set to `real` to call the live ML service |
 | `NEXT_PUBLIC_USE_MOCK_PERCEPTION` | `true` | set to `false` to use the real camera and mic |
+| `NEXT_PUBLIC_TRANSCRIBE_URL` | none | optional ML `/transcribe` URL; enables the server-side Whisper STT fallback |
 | `ADMIN_PASSWORD` | none in production | required strong admin password for hosted demos |
 
 ML service: `PERSONA_STRATEGY`, `USE_MOCK_BUREAU`, `ENABLE_GEMINI_FALLBACK`, `CORS_ALLOWED_ORIGINS`.
@@ -239,27 +240,32 @@ DATABASE_URL=postgresql://...sslmode=require pnpm --filter @loan-wizard/web seed
 
 We would rather be precise than oversell. As of this prototype:
 
-- **Age estimation runs in mock mode by default.** The browser age estimator
-  expects a TF.js model under `packages/perception/models/age-mobilenet-tfjs/`,
-  which is not committed. Without it the estimator returns a placeholder age, so
-  the real-camera path uses a mock age signal until weights are dropped in. Risk
-  and fraud scoring still run on real models; only the age input is mocked.
-- **Speech-to-text is browser dependent.** The Web Speech API is reliable in
-  Chrome but unreliable on Safari (low/zero confidence) and disabled by default
-  on Firefox. The Whisper fallback needs a `/transcribe` backend to be wired.
-- **Decision replay uses the current in-memory model**, not an archived snapshot
-  of the model weights. The *inputs* are frozen for faithful replay; if the model
-  is retrained, replayed scores can differ slightly.
-- **The bureau pull is mocked** behind an adapter (no live CIBIL/Experian
-  credentials), and the public judge link runs scripted perception and a reliable
-  mock offer for reliability — see "Live demo flow" above.
+- **Age estimation** runs a real in-browser model via
+  [`@vladmandic/face-api`](https://github.com/vladmandic/face-api) (weights
+  vendored under `packages/perception/models/face-api/`, served at
+  `/models/face-api`). It degrades gracefully to a placeholder if the weights
+  can't load, so a session never breaks.
+- **Speech-to-text** uses the browser Web Speech API (reliable on Chrome, weaker
+  on Safari/Firefox) and automatically falls back to a server-side Whisper
+  endpoint (`POST /transcribe` on the ML service) when confidence is low. The
+  Whisper model is an opt-in deploy toggle (`ENABLE_WHISPER=true` + the `audio`
+  extra) to keep the default image light; the browser→server fallback is wired
+  end-to-end.
+- **Decision replay loads the exact archived model version** recorded on the
+  decision (`model_versions_at_decision`), falling back to the current model and
+  flagging `exact_model_match=false` only if that version isn't archived.
+- **The bureau pull is mocked** behind an adapter (`app/services/bureau/`). This
+  is intentional prototype scope — live CIBIL/Experian access needs commercial
+  credentials, and a real adapter is a drop-in against the existing interface.
+- The public judge link runs scripted perception and a reliable mock offer for
+  reliability; the real camera + ML path runs locally — see "Live demo flow".
 
 ---
 
 ## Tech stack
 
 - **Frontend:** Next.js 14 (App Router), React 18, Tailwind v4 (CSS-variable design tokens), Framer Motion, next-intl.
-- **Perception:** TensorFlow.js, BlazeFace, face-landmarks-detection, Tesseract.js, Web Speech API.
+- **Perception:** TensorFlow.js, BlazeFace, face-landmarks-detection, @vladmandic/face-api (age), Tesseract.js, Web Speech API.
 - **ML service:** FastAPI, TensorFlow/Keras, scikit-learn, pandas, SQLAlchemy.
 - **Data:** PostgreSQL, Prisma (web), SQLAlchemy (ML service).
 - **Tooling:** pnpm workspaces, Turborepo, TypeScript, Zod, pytest.

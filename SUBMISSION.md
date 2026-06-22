@@ -64,20 +64,24 @@ production without it). `DATABASE_URL` is required at runtime for both Spaces.
 
 ## 4. What is real vs mocked (demo honesty)
 
-**Real:** the full ML decision pipeline (Keras risk MLP, Keras fraud MLP, rules persona
-classifier, policy engine, bureau merge, reason narrator), audit + frozen decision
-snapshots, decision replay, the session state machine, the web UI, and the admin console
-(sessions, fairness, drift, replay). Browser perception (TF.js liveness, OCR, speech,
+**Real:** the full ML decision pipeline (Keras risk MLP with model-derived permutation
+importance, Keras fraud MLP, rules persona classifier, policy engine, bureau merge, reason
+narrator), audit + frozen decision snapshots, decision replay **on the exact archived model
+version**, the session state machine, the web UI, and the admin console (sessions, fairness,
+drift, replay). Browser perception (TF.js liveness, OCR, real face-api age model, speech,
 device fingerprint) is real and runs locally with `NEXT_PUBLIC_USE_MOCK_PERCEPTION=false`.
+Speech-to-text falls back from the browser Web Speech API to a server-side Whisper
+endpoint (`POST /transcribe`) when confidence is low.
 
 **Mocked / optional by design:** the bureau pull (CIBIL/Experian behind an adapter — no
-live credentials), the LLM narration (deterministic template by default; Gemini/Gemma
-optional), and the public judge link runs scripted perception + a reliable mock offer so
-the end-to-end demo never depends on a webcam or a cold ML Space.
+live credentials; intentional prototype scope), the LLM narration (deterministic template
+by default; Gemini/Gemma optional), the Whisper STT model (opt-in deploy toggle — the
+browser→server fallback is wired regardless), and the public judge link runs scripted
+perception + a reliable mock offer so the end-to-end demo never depends on a webcam or a
+cold ML Space.
 
-**Known limitations:** the age-estimator TF.js weights are not committed, so age falls
-back to a mock estimate in the browser path; Web Speech API confidence is unreliable on
-Safari and disabled by default on Firefox (use Chrome for the live camera demo).
+**Browser caveat:** Web Speech API confidence is weaker on Safari and disabled by default
+on Firefox — use Chrome for the live camera demo (the Whisper fallback covers the rest).
 
 ---
 
@@ -120,3 +124,18 @@ Correctness & de-gimmicking (full audit pass):
   metrics/preview so nothing reads as fake live data.
 - Docs: added a "Known limitations" section to the README and softened an unbacked
   "under two minutes" claim to "in minutes, not days".
+
+Known-limitation fixes (judge-hardening pass):
+- ML: **decision replay now loads the exact archived model version** recorded on the
+  decision (`app/services/model_loader.py`, `routes/decisions.py`); weights are archived
+  per version under `app/models/*/archive/<version>/`, with `exact_model_match` reported
+  in the response and training scripts auto-archiving future versions.
+- ML: added a real **`POST /transcribe`** Whisper endpoint (`routes/transcribe.py`,
+  `services/transcriber.py`, optional `audio` extra) with graceful 503 when disabled;
+  unit-tested with a mocked backend.
+- Web/perception: the browser STT **Whisper fallback is now wired** end-to-end via
+  `NEXT_PUBLIC_TRANSCRIBE_URL` (`lib/config.ts`, `AgentCallUI.tsx`).
+- Perception: the age estimator now runs a **real face-api model** with weights vendored
+  under `models/face-api/` + `apps/web/public/models/face-api/` (`cv/age-estimator.ts`),
+  with a graceful mock fallback.
+- Bureau pull is left mocked on purpose (prototype scope; real adapter is a drop-in).

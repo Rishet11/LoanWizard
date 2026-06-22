@@ -31,3 +31,22 @@ curl https://<space-host>/docs
 curl https://<space-host>/fairness/report
 curl https://<space-host>/drift/monthly_income/baseline
 ```
+
+## Decision replay on the exact model version
+
+Each decision is stamped with the model versions that produced it, and the
+weights for each version are archived under `app/models/*/archive/<version>/`.
+`POST /decisions/{id}/replay` loads the archived risk model matching the
+decision's recorded version (response field `exact_model_match`), so a replay
+reflects the model as it was, not whatever is currently deployed.
+
+## Optional: server-side speech-to-text (`POST /transcribe`)
+
+The browser perception layer falls back to this endpoint when the Web Speech API
+is low-confidence (Safari/Firefox). It is **off by default** to keep the image
+light. To enable on a Space:
+
+1. Install the audio extra in the `Dockerfile` (`pip install ".[gemini,audio]"`).
+2. Set `ENABLE_WHISPER=true` (optionally `WHISPER_MODEL=base`).
+
+Without these, `/transcribe` returns `503` and the browser simply uses Web Speech.
