@@ -2,9 +2,10 @@ FROM node:20-bookworm-slim
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 ENV NEXT_PUBLIC_ML_MODE=mock
 ENV NEXT_PUBLIC_USE_MOCK_PERCEPTION=true
+ENV ML_SERVICE_URL=https://rishet11-loanwizard-ml.hf.space
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
@@ -17,14 +18,11 @@ COPY apps/web/package.json ./apps/web/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json
 COPY packages/perception/package.json ./packages/perception/package.json
 
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts --prod=false
 
 COPY packages ./packages
 COPY apps/web ./apps/web
 
-RUN pnpm --filter @loan-wizard/web db:generate
-RUN pnpm --filter @loan-wizard/web build
-
 EXPOSE 3000
 
-CMD ["pnpm", "--dir", "apps/web", "exec", "next", "start", "-H", "0.0.0.0", "-p", "3000"]
+CMD ["sh", "-c", "pnpm --dir apps/web db:generate && pnpm --dir apps/web dev -H 0.0.0.0 -p 3000"]
